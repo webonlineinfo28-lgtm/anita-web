@@ -1,0 +1,1 @@
+ $f = "C:\Users\rbrub\Desktop\anita-web - copia (2)\src\components\DjBoothCard.jsx"; $c = [System.IO.File]::ReadAllText($f); $c = $c -replace "DJ Vac[A-Za-z ]*", "DJ Vacío"; [System.IO.File]::WriteAllText($f, $c) 
