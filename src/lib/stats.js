@@ -1,4 +1,4 @@
-// Sistema de FAMA: XP, niveles y insignias coleccionables.
+﻿// Sistema de FAMA: XP, niveles e insignias coleccionables.
 
 export const XP_EVENTS = {
   bingo: 150,
@@ -8,27 +8,27 @@ export const XP_EVENTS = {
   reactionReceived: 5,
 };
 
-// Niveles cósmicos con sus títulos.
+// Niveles cosmicos con sus titulos.
 export const LEVEL_TITLES = [
-  { level: 1, minXp: 0, title: "Novato Cósmico", icon: "🍼" },
-  { level: 2, minXp: 200, title: "Casual Festivo", icon: "🧃" },
-  { level: 3, minXp: 500, title: "Farandulero", icon: "🎉" },
-  { level: 4, minXp: 1000, title: "Estrella de la Noche", icon: "⭐" },
-  { level: 5, minXp: 2000, title: "Ídolo Galáctico", icon: "🌟" },
-  { level: 6, minXp: 4000, title: "Supernova", icon: "💫" },
-  { level: 7, minXp: 7000, title: "Leyenda del Festival", icon: "👑" },
+  { level: 1, minXp: 0, title: "Novato Cosmic", icon: "*" },
+  { level: 2, minXp: 200, title: "Casual Festivo", icon: "~" },
+  { level: 3, minXp: 500, title: "Farandulero", icon: "!" },
+  { level: 4, minXp: 1000, title: "Estrella de la Noche", icon: "#" },
+  { level: 5, minXp: 2000, title: "Idolo Galactic", icon: "+" },
+  { level: 6, minXp: 4000, title: "Supernova", icon: "@" },
+  { level: 7, minXp: 7000, title: "Leyenda del Festival", icon: "$" },
 ];
 
 export const BADGES = [
-  { id: "first-bingo", name: "Primer Bingo", desc: "Consigue tu primer bingo", icon: "🎯", check: (s) => s.bingos >= 1 },
-  { id: "bingo-10", name: "Bingo Master", desc: "10 bingos en tu historial", icon: "🏆", check: (s) => s.bingos >= 10 },
-  { id: "dea-line", name: "Línea Fatal", desc: "Completa tu primera línea", icon: "📏", check: (s) => s.lines >= 1 },
-  { id: "dj-debut", name: "De DJ Debut", desc: "Pon tu primera canción en la cabina", icon: "🎧", check: (s) => s.djSets >= 1 },
-  { id: "five-sets", name: "Set de Lujo", desc: "5 sets de DJ", icon: "🎛️", check: (s) => s.djSets >= 5 },
-  { id: "promotor", name: "Promotor", desc: "Añade 5 canciones a la fiesta", icon: "📣", check: (s) => s.songsAdded >= 5 },
-  { id: "favorite", name: "Muy Querido", desc: "10 reacciones recibidas", icon: "💖", check: (s) => s.reactionsReceived >= 10 },
-  { id: "star-1000", name: "Estrella", desc: "Alcanza 1.000 XP", icon: "✨", check: (s) => s.xp >= 1000 },
-  { id: "cosmic-legend", name: "Leyenda Cósmica", desc: "Alcanza 5.000 XP", icon: "🌌", check: (s) => s.xp >= 5000 },
+  { id: "first-bingo", name: "Primer Bingo", desc: "Consigue tu primer bingo", icon: "!", color: "#ec4899", check: (s) => s.bingos >= 1 },
+  { id: "bingo-10", name: "Bingo Master", desc: "10 bingos en tu historial", icon: "$", color: "#fbbf24", check: (s) => s.bingos >= 10 },
+  { id: "first-line", name: "Linea Fatal", desc: "Completa tu primera linea", icon: "=", color: "#a855f7", check: (s) => s.lines >= 1 },
+  { id: "dj-debut", name: "DJ Debut", desc: "Pon tu primera cancion en la cabina", icon: "~", color: "#22d3ee", check: (s) => s.djSets >= 1 },
+  { id: "five-sets", name: "Set de Lujo", desc: "5 sets de DJ", icon: "*", color: "#34d399", check: (s) => s.djSets >= 5 },
+  { id: "promotor", name: "Promotor", desc: "Anade 5 canciones a la fiesta", icon: "+", color: "#f59e0b", check: (s) => s.songsAdded >= 5 },
+  { id: "favorite", name: "Muy Querido", desc: "10 reacciones recibidas", icon: "%", color: "#ec4899", check: (s) => s.reactionsReceived >= 10 },
+  { id: "star-1000", name: "Estrella", desc: "Alcanza 1.000 XP", icon: "#", color: "#fbbf24", check: (s) => s.xp >= 1000 },
+  { id: "cosmic-legend", name: "Leyenda Cosica", desc: "Alcanza 5.000 XP", icon: "@", color: "#a855f7", check: (s) => s.xp >= 5000 },
 ];
 
 export function createStats() {
@@ -43,7 +43,6 @@ export function createStats() {
   };
 }
 
-// Devuelve el nivel y su título según el XP acumulado.
 export function levelFromXp(xp) {
   let current = LEVEL_TITLES[0];
   let next = null;
@@ -66,12 +65,10 @@ export function levelProgress(xp) {
   return { ...lvl, xp, currentMin, nextMin, pct };
 }
 
-// Insignias ganadas que el usuario aún no tenía.
 function newBadges(stats) {
   return BADGES.filter((b) => !stats.badges.includes(b.id) && b.check(stats));
 }
 
-// Aplica un evento y devuelve las stats actualizadas (nuevas insignias incluidas).
 export function recordEvent(stats, eventType) {
   const next = { ...stats, badges: [...stats.badges] };
 
@@ -99,9 +96,8 @@ export function recordEvent(stats, eventType) {
   return next;
 }
 
-// Registra un evento para un usuario dentro del mapa { user: stats }.
 export function addXp(statsMap, user, eventType) {
-  const key = String(user || "Anónimo");
+  const key = String(user || "Anonimo");
   const current = statsMap?.[key] ? { ...statsMap[key] } : createStats();
   const updated = recordEvent(current, eventType);
   const next = { ...(statsMap || {}) };

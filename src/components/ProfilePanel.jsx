@@ -1,9 +1,16 @@
-import { motion } from "framer-motion";
-import { BadgeCheck, Crown, X } from "lucide-react";
+﻿import { motion } from "framer-motion";
+import { BadgeCheck, Crown, X, Target, Ruler, Disc3, Heart } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
 import { BADGES } from "../lib/stats.js";
 import { levelProgress } from "../lib/stats.js";
+
+const STAT_ICONS = [
+  { label: "Bingos", key: "bingos", Icon: Target, color: "#ec4899" },
+  { label: "Lineas", key: "lines", Icon: Ruler, color: "#a855f7" },
+  { label: "Sets DJ", key: "djSets", Icon: Disc3, color: "#22d3ee" },
+  { label: "Reacciones", key: "reactionsReceived", Icon: Heart, color: "#fbbf24" },
+];
 
 export default function ProfilePanel({ user, isAdmin, avatar, stats, onClose }) {
   const prog = levelProgress(stats?.xp || 0);
@@ -42,7 +49,7 @@ export default function ProfilePanel({ user, isAdmin, avatar, stats, onClose }) 
               <div className="mb-1 flex justify-between text-[7px] font-black uppercase tracking-widest text-zinc-500">
                 <span>Nivel {prog.level}</span>
                 <span>
-                  {stats?.xp || 0} XP{prog.next ? ` · ${prog.nextMin} XP` : ""}
+                  {stats?.xp || 0} XP{prog.next ? ` / ${prog.nextMin} XP` : ""}
                 </span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-white/5">
@@ -57,17 +64,14 @@ export default function ProfilePanel({ user, isAdmin, avatar, stats, onClose }) 
         </div>
 
         <div className="mt-4 grid grid-cols-4 gap-2 text-center">
-          {[
-            { label: "Bingos", value: stats?.bingos || 0, icon: "🎯" },
-            { label: "Líneas", value: stats?.lines || 0, icon: "📏" },
-            { label: "Sets DJ", value: stats?.djSets || 0, icon: "🎧" },
-            { label: "Reacciones", value: stats?.reactionsReceived || 0, icon: "💖" },
-          ].map((s) => (
-            <div key={s.label} className="rounded-xl border border-white/5 bg-white/5 px-1 py-2">
-              <p className="text-base">{s.icon}</p>
-              <p className="text-sm font-black text-white">{s.value}</p>
+          {STAT_ICONS.map(({ label, key, Icon, color }) => (
+            <div key={key} className="rounded-xl border border-white/5 bg-white/5 px-1 py-2">
+              <div className="flex justify-center">
+                <Icon size={16} style={{ color }} />
+              </div>
+              <p className="mt-0.5 text-sm font-black text-white">{stats?.[key] || 0}</p>
               <p className="text-[6px] font-black uppercase tracking-widest text-zinc-600">
-                {s.label}
+                {label}
               </p>
             </div>
           ))}
@@ -84,10 +88,11 @@ export default function ProfilePanel({ user, isAdmin, avatar, stats, onClose }) 
                 <div
                   key={b.id}
                   title={b.desc}
-                  className="flex flex-col items-center rounded-xl border border-pink-500/20 bg-pink-500/5 px-1 py-2 text-center"
+                  className="flex flex-col items-center rounded-xl border px-1 py-2 text-center"
+                  style={{ borderColor: `${b.color || "#ec4899"}40`, background: `${b.color || "#ec4899"}10` }}
                 >
-                  <span className="text-xl">{b.icon}</span>
-                  <span className="mt-0.5 text-[6px] font-black uppercase tracking-wider text-pink-300">
+                  <span className="text-sm font-black" style={{ color: b.color || "#ec4899" }}>{b.icon}</span>
+                  <span className="mt-0.5 text-[6px] font-black uppercase tracking-wider" style={{ color: b.color || "#ec4899" }}>
                     {b.name}
                   </span>
                 </div>
@@ -95,7 +100,7 @@ export default function ProfilePanel({ user, isAdmin, avatar, stats, onClose }) 
             </div>
           ) : (
             <p className="rounded-xl border border-white/5 bg-white/5 px-3 py-3 text-center text-[8px] font-black uppercase italic tracking-widest text-zinc-600">
-              Consigue tu primera insignia jugando al bingo o pinchando 🎉
+              Consigue tu primera insignia jugando al bingo o pinchando
             </p>
           )}
         </div>

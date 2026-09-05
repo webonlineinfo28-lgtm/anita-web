@@ -1,10 +1,9 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion } from "framer-motion";
-import { Dices, X } from "lucide-react";
+import { Dices, X, Triangle, PartyPopper, Circle } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
 
-// Ruleta cósmica: elige al azar quién sube a la cabina.
 export default function DjWheel({ users, avatars, onPick, onClose }) {
   const [deg, setDeg] = useState(0);
   const [winnerIdx, setWinnerIdx] = useState(null);
@@ -35,20 +34,20 @@ export default function DjWheel({ users, avatars, onPick, onClose }) {
       <div className="relative w-full max-w-md rounded-[2rem] border border-white/10 bg-zinc-900/90 p-6 text-center shadow-2xl backdrop-blur-xl">
         <div className="mb-2 flex items-start justify-between">
           <h2 className="text-lg font-black uppercase tracking-tighter">
-            Sorteo <span className="text-amber-400">cósmico</span> 🎡
+            Sorteo <span className="text-amber-400">cosmico</span>
+            <Circle size={20} className="ml-2 inline text-amber-400" />
           </h2>
           <button onClick={onClose} className="rounded-full p-2 text-zinc-500 transition-colors hover:bg-white/10 hover:text-white">
             <X size={16} />
           </button>
         </div>
         <p className="mb-4 text-[10px] text-zinc-500">
-          La rueda decidirá quién sube a la cabina.
+          La rueda decidira quien sube a la cabina.
         </p>
 
         <div className="relative mx-auto mb-4 h-60 w-60">
-          {/* Cono que señala al ganador */}
-          <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2 text-2xl">
-            🔻
+          <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2">
+            <Triangle size={24} className="fill-amber-400 text-amber-400" style={{ transform: "rotate(180deg)" }} />
           </div>
 
           <motion.div
@@ -63,11 +62,7 @@ export default function DjWheel({ users, avatars, onPick, onClose }) {
                 style={{ transform: `rotate(${angle(i)}deg) translateY(-${radius}px)` }}
               >
                 <div style={{ transform: `rotate(${-angle(i)}deg)` }}>
-                  <Avatar
-                    config={avatars[user]}
-                    size={44}
-                    live={winnerIdx === i}
-                  />
+                  <Avatar config={avatars[user]} size={44} live={winnerIdx === i} />
                 </div>
               </div>
             ))}
@@ -76,8 +71,9 @@ export default function DjWheel({ users, avatars, onPick, onClose }) {
         </div>
 
         {winnerIdx !== null && (
-          <p className="mb-3 text-lg font-black uppercase tracking-tighter">
-            🎉 <span style={{ color: "#fbbf24" }}>{users[winnerIdx]}</span> sube a la cabina
+          <p className="mb-3 flex items-center justify-center gap-2 text-lg font-black uppercase tracking-tighter">
+            <PartyPopper size={18} className="text-amber-400" />
+            <span style={{ color: "#fbbf24" }}>{users[winnerIdx]}</span> sube a la cabina
           </p>
         )}
 
@@ -87,7 +83,7 @@ export default function DjWheel({ users, avatars, onPick, onClose }) {
           className="rounded-full bg-gradient-to-r from-amber-500 to-pink-600 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-amber-500/20 transition-all hover:from-amber-400 hover:to-pink-500 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <span className="flex items-center gap-2">
-            <Dices size={14} /> {spinning ? "Girando…" : "Girar la rueda"}
+            <Dices size={14} /> {spinning ? "Girando..." : "Girar la rueda"}
           </span>
         </button>
       </div>

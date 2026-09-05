@@ -1,40 +1,7 @@
-/* ============================================================
-   Utilidades glassmorphism para Anita Festival
-   (Importado en main.jsx DESPUÉS de index.css)
+﻿/* ============================================================
+   App-level utilities for Anita Festival
+   (Complementary to index.css)
    ============================================================ */
-
-.glass-card {
-  background-color: rgba(24, 24, 27, 0.15);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
-  border-radius: 3rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.glass-input {
-  background-color: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 1rem;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.glass-input:focus-visible {
-  border-color: rgb(236, 72, 153);
-  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
-}
-
-.glass-button {
-  background-color: rgba(255, 255, 255, 0.05);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.3s ease;
-}
-
-.glass-button:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.1);
-}
 
 /* Girar lentamente (disco de vinilo) */
 @keyframes spin-slow {
@@ -50,22 +17,10 @@
   animation: spin-slow 4s linear infinite;
 }
 
-/* Ocultar scrollbars horizontales de las colas */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
 /* Respetar usuarios con movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
-  .animate-spin-slow,
-  .glass-button,
-  .glass-input {
+  .animate-spin-slow {
     animation-duration: 0.001s !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01s !important;
   }
 }

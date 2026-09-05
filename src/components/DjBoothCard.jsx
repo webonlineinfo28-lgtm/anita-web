@@ -7,38 +7,44 @@ import {
   Shuffle,
   UserMinus,
   UserPlus,
+  X,
+  Sliders,
 } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
 import { AVATAR_PALETTES } from "../lib/avatars.js";
 
-// Reacciones flotantes que se lanzan al pulsar un emoji.
+// Burbujas flotantes para las reacciones.
 function Bursts({ bursts }) {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <AnimatePresence>
-        {bursts.map((b) => (
-          <motion.span
-            key={b.id}
-            initial={{ opacity: 0, y: 10, scale: 0.4 }}
-            animate={{ opacity: [0, 1, 1, 0], y: -90, scale: 1.3 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.4, ease: "easeOut" }}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 text-3xl"
-          >
-            {b.emoji}
-          </motion.span>
-        ))}
+        {bursts.map((b) => {
+          const Icon = b.icon;
+          return (
+            <motion.span
+              key={b.id}
+              initial={{ opacity: 0, y: 10, scale: 0.4 }}
+              animate={{ opacity: [0, 1, 1, 0], y: -90, scale: 1.3 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.4, ease: "easeOut" }}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2"
+              style={{ color: b.color || "#ec4899" }}
+            >
+              <Icon size={32} />
+            </motion.span>
+          );
+        })}
       </AnimatePresence>
     </div>
   );
 }
 
-// Cabina del DJ: quién está pinchando, la canción en el aire y la lista de espera.
+// Cabina del DJ: quien esta pinchando, la cancion en el aire y la lista de espera.
 export default function DjBoothCard({
   currentDj,
   djAvatar,
-  djTitle = "Novato Cósmico",
+  djTitle = "Novato Cosmico",
   track,
   progress = 0,
   isAdmin,
@@ -58,7 +64,6 @@ export default function DjBoothCard({
 
   return (
     <div className="glass-card relative overflow-hidden rounded-[2.5rem] p-6">
-      {/* degradado del acento del DJ */}
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={{
@@ -67,7 +72,6 @@ export default function DjBoothCard({
       />
 
       <div className="relative z-10 flex items-center gap-5">
-        {/* Avatar gigante de la cabina */}
         <div className="relative shrink-0">
           <Avatar config={djAvatar} size={104} live />
           <span
@@ -92,7 +96,7 @@ export default function DjBoothCard({
           </div>
 
           <h2 className="mt-1 truncate text-2xl font-black uppercase tracking-tighter">
-            {currentDj || "—"}
+            {currentDj || "�"}
           </h2>
 
           <div className="mt-2 flex items-center gap-2 text-zinc-300">
@@ -102,67 +106,67 @@ export default function DjBoothCard({
                   size={14}
                   className="shrink-0 animate-spin-slow text-pink-400"
                 />
-                <p className="truncate text-[11px] font-bold">{track.title}</p>
+                <p className="truncate text-[11px] font-bold">
+                  {track.title}
+                </p>
               </>
             ) : (
-              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-                La cabina espera su primera canción…
+              <p className="text-[10px] italic text-zinc-600">
+                Sin cancion asignada
               </p>
             )}
           </div>
 
-          {/* Barra de progreso */}
-          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/5">
-            <motion.div
-              className="h-full rounded-full"
-              style={{ background: `linear-gradient(90deg, ${accent}, #ec4899)` }}
-              animate={{ width: `${Math.min(100, progress * 100)}%` }}
-              transition={{ duration: 0.4 }}
-            />
-          </div>
-        </div>
-
-        <div className="flex shrink-0 flex-col gap-2">
-          {inWaitlist ? (
-            <button
-              onClick={onLeave}
-              className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-zinc-300 transition-all hover:border-pink-500/40 hover:text-pink-400"
-            >
-              <UserMinus size={12} /> Salir
-            </button>
-          ) : (
-            <button
-              onClick={onJoin}
-              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-pink-600 to-purple-600 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-white shadow-lg shadow-pink-600/20 transition-all hover:from-pink-500 hover:to-purple-500"
-            >
-              <UserPlus size={12} /> Subir a la cabina
-            </button>
-          )}
-          {isAdmin && (
-            <button
-              onClick={onOpenWheel}
-              disabled={waitlist.length < 2}
-              className="flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-amber-300 transition-all hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-40"
-              title="Sorteo cósmico para elegir al próximo DJ"
-            >
-              <Shuffle size={12} /> Sorteo
-            </button>
+          {track && (
+            <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-pink-500 to-purple-500"
+                style={{ width: `${Math.min(100, progress)}%` }}
+              />
+            </div>
           )}
         </div>
       </div>
 
+      <div className="relative z-10 mt-4 flex flex-wrap items-center gap-2">
+        {inWaitlist ? (
+          <button
+            onClick={onLeave}
+            className="flex items-center gap-1.5 rounded-full border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-pink-400 transition-all hover:bg-pink-500/20"
+          >
+            <UserMinus size={12} /> Salir
+          </button>
+        ) : (
+          <button
+            onClick={onJoin}
+            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-pink-600 to-purple-600 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-white shadow-lg shadow-pink-600/20 transition-all hover:from-pink-500 hover:to-purple-500"
+          >
+            <UserPlus size={12} /> Subir a la cabina
+          </button>
+        )}
+        {isAdmin && (
+          <button
+            onClick={onOpenWheel}
+            disabled={waitlist.length < 2}
+            className="flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-amber-300 transition-all hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+            title="Sorteo cosmico para elegir al proximo DJ"
+          >
+            <Shuffle size={12} /> Sorteo
+          </button>
+        )}
+      </div>
+
       <Bursts bursts={bursts} />
 
-      {/* Lista de espera */}
       {waitlist.length > 0 && (
         <div className="relative z-10 mt-4 border-t border-white/5 pt-3">
           <div className="mb-2 flex items-center justify-between px-1">
             <span className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-zinc-500">
-              <ListMusic size={10} /> Cabina · lista de espera ({waitlist.length})
+              <ListMusic size={10} /> Cabina - lista de espera ({waitlist.length})
             </span>
             {reactionsTotal > 0 && (
               <span className="text-[8px] font-black uppercase tracking-widest text-pink-400">
-                {reactionsTotal} reacción{reactionsTotal !== 1 ? "es" : ""}
+                {reactionsTotal} reaccion{reactionsTotal !== 1 ? "es" : ""}
               </span>
             )}
           </div>
@@ -184,15 +188,15 @@ export default function DjBoothCard({
                     {user}
                   </span>
                   {mine && (
-                    <span className="text-[7px] font-black uppercase text-pink-400">tú</span>
+                    <span className="text-[7px] font-black uppercase text-pink-400">tu</span>
                   )}
                   {isAdmin && i > 0 && (
                     <button
                       onClick={() => onEject(user)}
                       title="Sacar de la cola"
-                      className="ml-0.5 rounded-full px-1 text-[10px] text-zinc-600 transition-colors hover:text-red-400"
+                      className="ml-0.5 rounded-full p-0.5 text-zinc-600 transition-colors hover:text-red-400"
                     >
-                      ✕
+                      <X size={10} />
                     </button>
                   )}
                 </div>
@@ -203,8 +207,9 @@ export default function DjBoothCard({
       )}
 
       {isHostPlayer && (
-        <p className="relative z-10 mt-3 text-center text-[7px] font-bold uppercase tracking-widest text-zinc-600">
-          Estás pinchando en directo, ¡disfruta el set! 🎛️
+        <p className="relative z-10 mt-3 flex items-center justify-center gap-1.5 text-center text-[7px] font-bold uppercase tracking-widest text-zinc-600">
+          <Sliders size={10} />
+          <span>Estas pinchando en directo, disfruta el set</span>
         </p>
       )}
     </div>

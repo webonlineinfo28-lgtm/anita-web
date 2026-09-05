@@ -1,3 +1,298 @@
+/* ============================================================
+   Anita Festival - Design System
+   Professional Cosmic Theme
+   ============================================================ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================================
+   CSS Custom Properties - Design Tokens
+   ============================================================ */
+:root {
+  --color-void: #030303;
+  --color-abyss: #0a0a0f;
+  --color-nebula: #12121a;
+  --color-stardust: #1a1a24;
+  
+  --color-pink-primary: #ec4899;
+  --color-pink-glow: rgba(236, 72, 153, 0.5);
+  --color-pink-subtle: rgba(236, 72, 153, 0.15);
+  --color-purple-primary: #a855f7;
+  --color-purple-glow: rgba(168, 85, 247, 0.5);
+  --color-purple-subtle: rgba(168, 85, 247, 0.15);
+  --color-cyan-primary: #22d3ee;
+  --color-cyan-glow: rgba(34, 211, 238, 0.5);
+  --color-cyan-subtle: rgba(34, 211, 238, 0.12);
+  --color-amber-primary: #f59e0b;
+  --color-amber-glow: rgba(245, 158, 11, 0.5);
+  --color-amber-subtle: rgba(245, 158, 11, 0.12);
+  --color-emerald-primary: #34d399;
+  --color-emerald-glow: rgba(52, 211, 153, 0.5);
+  --color-emerald-subtle: rgba(52, 211, 153, 0.12);
+  
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+  --color-text-dim: #52525b;
+  
+  --glass-blur: 24px;
+  --glass-opacity: 0.15;
+  --glass-border: rgba(255, 255, 255, 0.06);
+  
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-2xl: 3rem;
+  
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+@layer base {
+  html {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-void);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-pink-primary);
+    color: white;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+  :focus-visible {
+    outline: 2px solid var(--color-pink-primary);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    background: linear-gradient(135deg, rgba(24, 24, 27, 0.4) 0%, rgba(24, 24, 27, 0.2) 100%);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-2xl);
+  }
+
+  .glass-card {
+    background: linear-gradient(145deg, rgba(24, 24, 27, 0.25) 0%, rgba(18, 18, 26, 0.15) 100%);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-input {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .glass-input:focus {
+    border-color: var(--color-pink-primary);
+    box-shadow: 0 0 0 3px var(--color-pink-subtle);
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--color-pink-primary) 0%, #c026d3 100%);
+    color: white;
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.75rem 1.5rem;
+    transition: all var(--transition-base);
+    box-shadow: 0 4px 14px var(--color-pink-glow);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px var(--color-pink-glow);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.6rem 1.2rem;
+    transition: all var(--transition-base);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: white;
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--color-text-muted);
+    padding: 0.5rem;
+    transition: all var(--transition-base);
+  }
+
+  .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--glass-border);
+    color: var(--color-text-secondary);
+  }
+
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--color-text-muted);
+    padding: 0.75rem;
+    transition: all var(--transition-base);
+  }
+
+  .btn-icon:hover {
+    border-color: var(--color-pink-primary);
+    color: var(--color-pink-primary);
+    background: var(--color-pink-subtle);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .badge-primary {
+    background: var(--color-pink-subtle);
+    border-color: rgba(236, 72, 153, 0.3);
+    color: var(--color-pink-primary);
+  }
+
+  .badge-success {
+    background: var(--color-emerald-subtle);
+    border-color: rgba(52, 211, 153, 0.3);
+    color: var(--color-emerald-primary);
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-text-muted);
+  }
+
+  .live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-emerald-primary);
+  }
+
+  .live-indicator::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--color-emerald-primary);
+    border-radius: 50%;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .text-gradient-pink {
+    background: linear-gradient(135deg, var(--color-pink-primary), var(--color-purple-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-cosmic {
+    background: linear-gradient(135deg, var(--color-pink-primary) 0%, var(--color-purple-primary) 50%, var(--color-cyan-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow-pink { box-shadow: 0 0 20px var(--color-pink-glow); }
+  .glow-purple { box-shadow: 0 0 20px var(--color-purple-glow); }
+  .glow-cyan { box-shadow: 0 0 20px var(--color-cyan-glow); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--color-emerald-primary); }
+  50% { opacity: 0.6; box-shadow: 0 0 8px var(--color-emerald-glow); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
