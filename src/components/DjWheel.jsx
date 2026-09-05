@@ -34,7 +34,7 @@ export default function DjWheel({ users, avatars, onPick, onClose }) {
       <div className="relative w-full max-w-md rounded-[2rem] border border-white/10 bg-zinc-900/90 p-6 text-center shadow-2xl backdrop-blur-xl">
         <div className="mb-2 flex items-start justify-between">
           <h2 className="text-lg font-black uppercase tracking-tighter">
-            Sorteo <span className="text-amber-400">cosmico</span>
+            Sorteo <span className="text-amber-400">c�smico</span>
             <Circle size={20} className="ml-2 inline text-amber-400" />
           </h2>
           <button onClick={onClose} className="rounded-full p-2 text-zinc-500 transition-colors hover:bg-white/10 hover:text-white">
@@ -42,7 +42,7 @@ export default function DjWheel({ users, avatars, onPick, onClose }) {
           </button>
         </div>
         <p className="mb-4 text-[10px] text-zinc-500">
-          La rueda decidira quien sube a la cabina.
+          La rueda decidirá quien sube a la cabina.
         </p>
 
         <div className="relative mx-auto mb-4 h-60 w-60">

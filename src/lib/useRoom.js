@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { createLocalChannel } from "./sync.js";
 import { STORAGE_KEYS } from "./constants.js";
 import { createChatMessage, pushMessage, systemMessage } from "./chat-core.js";
@@ -26,7 +26,7 @@ const writeJSON = (key, value) => {
  * El host (admin) es el animo de la partida; los invitados celebran.
  */
 export function useRoom(session) {
-  const user = session?.user ?? "Anonimo";
+  const user = session?.user ?? "Anónimo";
   const isAdmin = session?.role === "admin";
   const [avatars, setAvatars] = useState(() => readJSON(STORAGE_KEYS.avatars, {}));
   const saveAvatar = useCallback((cfg) => {
@@ -47,6 +47,7 @@ export function useRoom(session) {
   const [messages, setMessages] = useState([]);
   const [trackReactions, setTrackReactions] = useState({});
   const [statsMap, setStatsMap] = useState(() => readJSON(STORAGE_KEYS.stats, {}));
+  const [bursts, setBursts] = useState([]);
   
   const channelRef = useRef(null);
   const broadcastRef = useRef(null);
@@ -108,15 +109,15 @@ export function useRoom(session) {
   const sendMessage = useCallback((text) => {
     const msg = createChatMessage({ user, text });
     setMessages((prev) => pushMessage(prev, msg));
-    broadcast({ messages: pushMessage(roomStateRef.current.messages, msg) });
-  }, [user, broadcast]);
+    broadcastRef.current && broadcastRef.current({ messages: pushMessage(roomStateRef.current.messages, msg) });
+  }, [user]);
 
   const react = useCallback((emoji) => {
     setTrackReactions((prev) => {
       const users = prev[emoji] || [];
       const nextUsers = users.includes(user) ? users : [...users, user];
       const next = { ...prev, [emoji]: nextUsers };
-      broadcast({ trackReactions: next });
+      broadcastRef.current && broadcastRef.current({ trackReactions: next });
       const id = ++burstIdRef.current;
       setBursts((b) => [...b, { id, emoji }]);
       setTimeout(() => setBursts((b) => b.filter((x) => x.id !== id)), 1500);
@@ -125,23 +126,33 @@ export function useRoom(session) {
       }
       return next;
     });
-  }, [user, dj, currentTrack, broadcast]);
+  }, [user, dj, currentTrack]);
 
   // --- Lista de espera / cabina ---
   const joinCabina = useCallback(() => {
     const next = joinWaitlist(roomStateRef.current.waitlist, user);
     setWaitlist(next);
-    broadcast({ waitlist: next });
-    broadcast({ messages: pushMessage(roomStateRef.current.messages, systemMessage(`${user} entro en la cola`)) });
-  }, [user, broadcast]);
+    broadcastRef.current && broadcastRef.current({ waitlist: next });
+    broadcastRef.current && broadcastRef.current({ messages: pushMessage(roomStateRef.current.messages, systemMessage(`${user} entro en la cola`)) });
+  }, [user]);
 
   const leaveCabina = useCallback(() => {
     const next = leaveWaitlist(roomStateRef.current.waitlist, user);
     const nextDj = next[0] || null;
     setWaitlist(next);
     setDj(nextDj);
-    broadcast({ waitlist: next, dj: nextDj });
-  }, [user, broadcast]);
+    broadcastRef.current && broadcastRef.current({ waitlist: next, dj: nextDj });
+  }, [user]);
+
+  const ejectFromCabina = useCallback((targetUser) => {
+    if (!isAdmin) return;
+    const next = leaveWaitlist(roomStateRef.current.waitlist, targetUser);
+    const nextDj = next[0] || null;
+    setWaitlist(next);
+    if (dj === targetUser) setDj(nextDj);
+    broadcastRef.current && broadcastRef.current({ waitlist: next, dj: nextDj });
+  }, [isAdmin, dj]);
+
 
   
   const rotateCabina = useCallback(() => {
@@ -151,16 +162,16 @@ export function useRoom(session) {
     setWaitlist(nextList);
     setDj(nextDj);
     setCurrentTrack(newPlaylist[0] || null);
-    broadcast({ waitlist: nextList, dj: nextDj, currentTrack: newPlaylist[0] || null });
+    broadcastRef.current && broadcastRef.current({ waitlist: nextList, dj: nextDj, currentTrack: newPlaylist[0] || null });
 
     if (nextDj) {
       const front = newPlaylist.filter((t) => t.addedBy === nextDj);
       const rest = newPlaylist.filter((t) => t.addedBy !== nextDj);
       setPlaylist([...front, ...rest]);
-      broadcast({ playlist: [...front, ...rest] });
+      broadcastRef.current && broadcastRef.current({ playlist: [...front, ...rest] });
       setStatsMap((prev) => addXp(prev, nextDj, "djSet"));
     }
-  }, [isAdmin, broadcast]);
+  }, [isAdmin]);
 
   // --- Canciones ---
   const addSong = useCallback(
@@ -170,44 +181,44 @@ export function useRoom(session) {
         if (!/^https?:\/\//.test(url) || url.includes("<")) return;
         const newSong = { url: url.trim(), id: crypto.randomUUID(), title: url.trim(), addedBy: user };
         setPlaylist((prev) => [...prev, newSong]);
-        broadcast({ playlist: [...roomStateRef.current.playlist, newSong] });
+        broadcastRef.current && broadcastRef.current({ playlist: [...roomStateRef.current.playlist, newSong] });
         if (!currentTrack) setCurrentTrack(newSong);
         setStatsMap((prev) => addXp(prev, user, "songAdded"));
       }
     },
-    [user, dj, isAdmin, currentTrack, broadcast],
+    [user, dj, isAdmin, currentTrack],
   );
 
   const playNext = useCallback(() => {
     if (!currentTrack) return;
     setHistory((prev) => [currentTrack, ...prev].slice(0, 20));
-    broadcast({ history: [currentTrack, ...roomStateRef.current.history].slice(0, 20) });
+    broadcastRef.current && broadcastRef.current({ history: [currentTrack, ...roomStateRef.current.history].slice(0, 20) });
     const nextQueue = roomStateRef.current.playlist.filter((t) => t.id !== currentTrack.id);
     setPlaylist(nextQueue);
     setCurrentTrack(nextQueue[0] || null);
-    broadcast({ playlist: nextQueue, currentTrack: nextQueue[0] || null });
+    broadcastRef.current && broadcastRef.current({ playlist: nextQueue, currentTrack: nextQueue[0] || null });
 
     const nextDj = nextQueue[0]?.addedBy || null;
     if (nextDj && nextDj !== dj) {
       setDj(nextDj);
-      broadcast({ dj: nextDj });
+      broadcastRef.current && broadcastRef.current({ dj: nextDj });
       setStatsMap((prev) => addXp(prev, nextDj, "djSet"));
     }
-  }, [currentTrack, dj, broadcast]);
+  }, [currentTrack, dj]);
 
   const togglePlay = useCallback(() => {
     setIsPlaying((p) => !p);
-    broadcast({ isPlaying: !roomStateRef.current.isPlaying });
-  }, [broadcast]);
+    broadcastRef.current && broadcastRef.current({ isPlaying: !roomStateRef.current.isPlaying });
+  }, []);
 
     
   const removeSong = useCallback((id) => {
     if (!(user === dj || isAdmin)) return;
     const next = roomStateRef.current.playlist.filter((t) => t.id !== id);
     setPlaylist(next);
-    broadcast({ playlist: next });
+    broadcastRef.current && broadcastRef.current({ playlist: next });
     if (currentTrack?.id === id) setCurrentTrack(next[0] || null);
-  }, [user, dj, isAdmin, currentTrack, broadcast]);
+  }, [user, dj, isAdmin, currentTrack]);
 
   // Mueve una canción al frente de la cola (solo DJ/host).
   const moveUp = useCallback((id) => {
@@ -218,8 +229,8 @@ export function useRoom(session) {
     const [song] = list.splice(idx, 1);
     const next = [song, ...list];
     setPlaylist(next);
-    broadcast({ playlist: next });
-  }, [user, dj, isAdmin, broadcast]);
+    broadcastRef.current && broadcastRef.current({ playlist: next });
+  }, [user, dj, isAdmin]);
 
   const awardXp = useCallback((eventType) => {
     setStatsMap((prev) => addXp(prev, user, eventType));

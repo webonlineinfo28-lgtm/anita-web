@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+﻿import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertCircle,
   ArrowUpCircle,
@@ -54,8 +54,8 @@ function App() {
     }
   });
 
-  const handleLogin = useCallback((name, role) => {
-    const newSession = { user: name, role, loginTime: new Date().toISOString() };
+  const handleLogin = useCallback(({ name, isHost }) => {
+    const newSession = { user: name, role: isHost ? 'admin' : 'player', loginTime: new Date().toISOString() };
     setSession(newSession);
     try {
       localStorage.setItem("anita_session", JSON.stringify(newSession));
@@ -90,7 +90,7 @@ function App() {
 
 function AppAuthenticated({ session, onLogout }) {
   const isAdmin = session?.role === "admin";
-  const user = session?.user ?? "Anonimo";
+  const user = session?.user ?? "Anónimo";
 
   const room = useRoom(session);
   const bingo = useBingo();
@@ -124,6 +124,8 @@ function AppAuthenticated({ session, onLogout }) {
   }, [localWinCheck, room, localWinRef]);
 
   const [showProfile, setShowProfile] = useState(false);
+  const [inputUrl, setInputUrl] = useState("");
+  const [addError, setAddError] = useState("");
   const [showDjWheel, setShowDjWheel] = useState(false);
   const [showAvatarEditor, setShowAvatarEditor] = useState(false);
   const [roomMode, setRoomMode] = useState("normal"); // "normal" | "projector"
@@ -136,7 +138,7 @@ function AppAuthenticated({ session, onLogout }) {
       await room.addSong(inputUrl.trim());
       setInputUrl("");
     } catch (e) {
-      setAddError(e.message || "Error al agregar cancion");
+      setAddError(e.message || "Error al agregar canción");
     }
   }, [inputUrl, room]);
 
@@ -230,7 +232,7 @@ function AppAuthenticated({ session, onLogout }) {
               isAdmin={isAdmin}
               inputUrl={inputUrl}
               setInputUrl={setInputUrl}
-              addSong={addSong}
+              onAddSong={addSong}
               isLoading={false}
               error={addError}
               onPlayNext={room.playNext}
@@ -238,22 +240,13 @@ function AppAuthenticated({ session, onLogout }) {
               onSelectTrack={room.setCurrentTrack}
               onRemoveSong={(id) => room.removeSong(id)}
               user={user}
-              canAddSong={isHostPlayer}
+
             />
 
             <BingoPanel
-              card={bingo.card}
-              drawnNumbers={bingo.drawnNumbers}
-              isBomboRunning={bingo.isBomboRunning}
-              winStatus={bingo.winStatus}
-              winners={bingoWinners}
-              permanentCounts={permanentCounts}
+              bingo={bingo}
               avatars={room.avatars}
-              onToggleBombo={bingo.toggle}
-              onResetGame={bingo.resetGame}
-              onNewCard={bingo.generateNewCard}
-              checkWin={bingo.checkWin}
-              isHost={isAdmin}
+                            isAdmin={isAdmin}
             />
 
             <RankingPanel
@@ -306,6 +299,7 @@ function AppAuthenticated({ session, onLogout }) {
 }
 
 export default App;
+
 
 
 

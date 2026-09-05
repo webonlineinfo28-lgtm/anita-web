@@ -105,64 +105,6 @@ function persistWinner(user, winType, gameId, currentWinners) {
   return next;
 }
 
-// --- Sonidos del bombo (WebAudio, sin ficheros externos) ---
-function makeSoundBox() {
-  let ctx = null;
-
-  const ensure = () => {
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return null;
-      if (!ctx) ctx = new AC();
-      if (ctx.state === "suspended") ctx.resume();
-      return ctx;
-    } catch {
-      return null;
-    }
-  };
-
-  const tone = (freq, start, dur, type = "sine", gain = 0.12) => {
-    const c = ensure();
-    if (!c) return;
-    try {
-      const osc = c.createOscillator();
-      const g = c.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, c.currentTime + start);
-      g.gain.setValueAtTime(0.0001, c.currentTime + start);
-      g.gain.exponentialRampToValueAtTime(gain, c.currentTime + start + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + start + dur);
-      osc.connect(g).connect(c.destination);
-      osc.start(c.currentTime + start);
-      osc.stop(c.currentTime + start + dur + 0.05);
-    } catch {
-      /* silencio ante cualquier error de audio */
-    }
-  };
-
-  return {
-    unlock() {
-      ensure();
-    },
-    blip() {
-      tone(660 + Math.random() * 120, 0, 0.12, "sine", 0.1);
-    },
-    win(isBingo) {
-      if (isBingo) {
-        // Fanfarria ascendente
-        [523.25, 659.25, 783.99, 1046.5].forEach((f, i) =>
-          tone(f, i * 0.14, 0.3, "triangle", 0.16),
-        );
-      } else {
-        [659.25, 783.99].forEach((f, i) =>
-          tone(f, i * 0.12, 0.22, "triangle", 0.14),
-        );
-      }
-    },
-  };
-}
-
-// ===========================================================================
 // HOOK PRINCIPAL DEL BINGO
 // ===========================================================================
 export function useBingo() {
@@ -191,7 +133,7 @@ export function useBingo() {
   const resetTimerRef = useRef(null);
   const transportRef = useRef(null);
   const lastAppliedJsonRef = useRef(""); // guard de eco remoto
-  const soundRef = useRef(makeSoundBox());
+  
   const isHostRef = useRef(false);
 
   // Copia del estado actual de bolas para uso seguro en el intervalo.
@@ -292,7 +234,7 @@ export function useBingo() {
       if (next === null) return;
       // Avance optimista del ref + sonido fuera del updater (seguro en StrictMode).
       drawnRef.current = [next, ...current];
-      soundRef.current.blip();
+      
       setDrawnNumbers([next, ...current]);
     }, DRAW_INTERVAL_MS);
 
@@ -332,7 +274,7 @@ export function useBingo() {
     if (isHost) setIsBomboRunning(false);
 
     clearTimeout(resumeTimerRef.current);
-    soundRef.current.win(type === "bingo");
+    
 
     // Aviso a la App para que sume fama al ganador.
     try {
@@ -387,7 +329,7 @@ export function useBingo() {
   // ---- API pública ----
 
   const toggleBombo = useCallback(() => {
-    soundRef.current.unlock();
+    
     clearTimeout(resumeTimerRef.current);
     setWinStatus(null);
     setIsBomboRunning((prev) => !prev);

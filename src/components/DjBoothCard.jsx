@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+﻿import { AnimatePresence, motion } from "framer-motion";
 import {
   Crown,
   Disc3,
@@ -40,11 +40,11 @@ function Bursts({ bursts }) {
   );
 }
 
-// Cabina del DJ: quien esta pinchando, la cancion en el aire y la lista de espera.
+// Cabina del DJ: quien esta pinchando, la canción en el aire y la lista de espera.
 export default function DjBoothCard({
   currentDj,
   djAvatar,
-  djTitle = "Novato Cosmico",
+  djTitle = "Novato Cósmico",
   track,
   progress = 0,
   isAdmin,
@@ -112,7 +112,7 @@ export default function DjBoothCard({
               </>
             ) : (
               <p className="text-[10px] italic text-zinc-600">
-                Sin cancion asignada
+                Sin canción asignada
               </p>
             )}
           </div>
@@ -149,7 +149,7 @@ export default function DjBoothCard({
             onClick={onOpenWheel}
             disabled={waitlist.length < 2}
             className="flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-amber-300 transition-all hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-40"
-            title="Sorteo cosmico para elegir al proximo DJ"
+            title="Sorteo c�smico para elegir al pr�ximo DJ"
           >
             <Shuffle size={12} /> Sorteo
           </button>

@@ -7,7 +7,7 @@ import { levelProgress } from "../lib/stats.js";
 
 const STAT_ICONS = [
   { label: "Bingos", key: "bingos", Icon: Target, color: "#ec4899" },
-  { label: "Lineas", key: "lines", Icon: Ruler, color: "#a855f7" },
+  { label: "Líneas", key: "lines", Icon: Ruler, color: "#a855f7" },
   { label: "Sets DJ", key: "djSets", Icon: Disc3, color: "#22d3ee" },
   { label: "Reacciones", key: "reactionsReceived", Icon: Heart, color: "#fbbf24" },
 ];

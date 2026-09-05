@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion } from "framer-motion";
 import { Disc3, Mic2, Crown, User, Sparkles, Zap } from "lucide-react";
 import "./login-screen.css";
@@ -18,7 +18,7 @@ export default function LoginScreen({ onLogin }) {
     await new Promise((r) => setTimeout(r, 600));
     onLogin({
       name: name.trim().slice(0, 20),
-      isHost: isHostMode && hostKey.trim() === "soy-anita",
+      isHost: isHostMode && hostKey.trim() === "uwu.777",
     });
   };
 
@@ -61,7 +61,7 @@ export default function LoginScreen({ onLogin }) {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.5 }}
         >
-          La noche donde la musica nunca para
+          La noche donde la música nunca para
         </motion.p>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -77,7 +77,7 @@ export default function LoginScreen({ onLogin }) {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Dj cosmic..."
+                placeholder="Tu nombre aqu�..."
                 maxLength={20}
                 autoFocus
                 required
@@ -166,7 +166,7 @@ export default function LoginScreen({ onLogin }) {
         >
           <div className="login-feature">
             <Disc3 size={12} />
-            <span>Bingo cosmico</span>
+            <span>Bingo cósmico</span>
           </div>
           <div className="login-feature">
             <Mic2 size={12} />

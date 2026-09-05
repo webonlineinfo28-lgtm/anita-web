@@ -17,7 +17,7 @@ export const STORAGE_KEYS = {
 
 // Contraseña del admin: definida en .env (VITE_ADMIN_PASSWORD) con fallback.
 export const getAdminPassword = () =>
-  import.meta.env.VITE_ADMIN_PASSWORD || "uwu777";
+  import.meta.env.VITE_ADMIN_PASSWORD || "uwu.777";
 
 // Nombre sugerido para el host del festival.
 export const HOST_USERNAME = "Anita_sorrita";

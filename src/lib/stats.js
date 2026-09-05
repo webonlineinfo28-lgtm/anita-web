@@ -8,9 +8,9 @@ export const XP_EVENTS = {
   reactionReceived: 5,
 };
 
-// Niveles cosmicos con sus titulos.
+// Niveles c�smicos con sus titulos.
 export const LEVEL_TITLES = [
-  { level: 1, minXp: 0, title: "Novato Cosmic", icon: "*" },
+  { level: 1, minXp: 0, title: "Novato C�smico", icon: "*" },
   { level: 2, minXp: 200, title: "Casual Festivo", icon: "~" },
   { level: 3, minXp: 500, title: "Farandulero", icon: "!" },
   { level: 4, minXp: 1000, title: "Estrella de la Noche", icon: "#" },
@@ -22,13 +22,13 @@ export const LEVEL_TITLES = [
 export const BADGES = [
   { id: "first-bingo", name: "Primer Bingo", desc: "Consigue tu primer bingo", icon: "!", color: "#ec4899", check: (s) => s.bingos >= 1 },
   { id: "bingo-10", name: "Bingo Master", desc: "10 bingos en tu historial", icon: "$", color: "#fbbf24", check: (s) => s.bingos >= 10 },
-  { id: "first-line", name: "Linea Fatal", desc: "Completa tu primera linea", icon: "=", color: "#a855f7", check: (s) => s.lines >= 1 },
-  { id: "dj-debut", name: "DJ Debut", desc: "Pon tu primera cancion en la cabina", icon: "~", color: "#22d3ee", check: (s) => s.djSets >= 1 },
+  { id: "first-line", name: "L�nea Fatal", desc: "Completa tu primera l�nea", icon: "=", color: "#a855f7", check: (s) => s.lines >= 1 },
+  { id: "dj-debut", name: "DJ Debut", desc: "Pon tu primera canci�n en la cabina", icon: "~", color: "#22d3ee", check: (s) => s.djSets >= 1 },
   { id: "five-sets", name: "Set de Lujo", desc: "5 sets de DJ", icon: "*", color: "#34d399", check: (s) => s.djSets >= 5 },
-  { id: "promotor", name: "Promotor", desc: "Anade 5 canciones a la fiesta", icon: "+", color: "#f59e0b", check: (s) => s.songsAdded >= 5 },
+  { id: "promotor", name: "Promotor", desc: "Añade 5 canciones a la fiesta", icon: "+", color: "#f59e0b", check: (s) => s.songsAdded >= 5 },
   { id: "favorite", name: "Muy Querido", desc: "10 reacciones recibidas", icon: "%", color: "#ec4899", check: (s) => s.reactionsReceived >= 10 },
   { id: "star-1000", name: "Estrella", desc: "Alcanza 1.000 XP", icon: "#", color: "#fbbf24", check: (s) => s.xp >= 1000 },
-  { id: "cosmic-legend", name: "Leyenda Cosica", desc: "Alcanza 5.000 XP", icon: "@", color: "#a855f7", check: (s) => s.xp >= 5000 },
+  { id: "cosmic-legend", name: "Leyenda C�smica", desc: "Alcanza 5.000 XP", icon: "@", color: "#a855f7", check: (s) => s.xp >= 5000 },
 ];
 
 export function createStats() {
@@ -97,7 +97,7 @@ export function recordEvent(stats, eventType) {
 }
 
 export function addXp(statsMap, user, eventType) {
-  const key = String(user || "Anonimo");
+  const key = String(user || "An�nimo");
   const current = statsMap?.[key] ? { ...statsMap[key] } : createStats();
   const updated = recordEvent(current, eventType);
   const next = { ...(statsMap || {}) };

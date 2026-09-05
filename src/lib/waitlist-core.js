@@ -1,4 +1,4 @@
-// Núcleo puro de la lista de espera de la cabina (estilo plug.dj).
+﻿// Núcleo puro de la lista de espera de la cabina (estilo plug.dj).
 // Trabaja sobre arrays de userIds, sin efecto ni estado global.
 
 // Añade un usuario a la cola (sin duplicados).
@@ -13,7 +13,7 @@ export function leaveWaitlist(waitlist, userId) {
 }
 
 // Rota la cabina: el DJ actual pasa al final y devuelve el nuevo DJ.
-// Devuelve [nuevaCola, proximoDj].
+// Devuelve [nuevaCola, próximoDj].
 export function rotateWaitlist(waitlist) {
   if (!waitlist.length) return [waitlist, null];
   const [leader, ...rest] = waitlist;

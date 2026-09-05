@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+﻿import { motion } from "framer-motion";
 import { Disc3, MessageSquare, Zap, Star, Users, Crown, X, BookOpen } from "lucide-react";
 
 const RULES = [
@@ -9,13 +9,13 @@ const RULES = [
     gradient: "from-pink-500/10 via-transparent to-transparent",
     borderGlow: "rgba(236, 72, 153, 0.25)",
     label: "La Cabina DJ",
-    subtitle: "Musica y rotacion",
+    subtitle: "M�sica y rotaci�n",
     items: [
-      { text: "Maximo 1 cancion por persona en la cola activa" },
-      { text: "Duracion maxima 8 minutos por track" },
-      { text: "Contenido NSFW o ilegal = expulsion inmediata" },
+      { text: "M�ximo 1 canci�n por persona en la cola activa" },
+      { text: "Duraci�n m�xima 8 minutos por track" },
+      { text: "Contenido NSFW o ilegal = expulsi�n inmediata" },
       { text: "El DJ decide que suena - respeta su turno" },
-      { text: "La cola rota automaticamente al terminar tema" },
+      { text: "La cola rota autom�ticamente al terminar tema" },
       { text: "El host puede sortear quien sube a la cabina" },
     ],
   },
@@ -26,13 +26,13 @@ const RULES = [
     gradient: "from-purple-500/10 via-transparent to-transparent",
     borderGlow: "rgba(168, 85, 247, 0.25)",
     label: "El Bingo",
-    subtitle: "Sorteo cosmico",
+    subtitle: "Sorteo c�smico",
     items: [
       { text: "Solo el host controla el bombo compartido" },
       { text: "Carton permanente - no cambia durante la partida" },
-      { text: "Linea pausa 13s - Bingo nueva partida" },
+      { text: "L�nea pausa 13s - Bingo nueva partida" },
       { text: "Cada jugador celebra su carton de forma local" },
-      { text: "Linea y Bingo disparan confeti epico + sonido" },
+      { text: "L�nea y Bingo disparan confeti �pico + sonido" },
       { text: "75 bolas sin repetidos, 3s entre extracciones" },
     ],
   },
@@ -43,12 +43,12 @@ const RULES = [
     gradient: "from-cyan-500/10 via-transparent to-transparent",
     borderGlow: "rgba(34, 211, 238, 0.25)",
     label: "Chat de Sala",
-    subtitle: "Comunicacion",
+    subtitle: "Comunicaci�n",
     items: [
-      { text: "Maximo 240 caracteres por mensaje" },
-      { text: "Sin spam ni flood - 60 mensajes maximo" },
-      { text: "Reacciones vinculadas a la cancion activa" },
-      { text: "Un emoji por usuario y cancion" },
+      { text: "M�ximo 240 caracteres por mensaje" },
+      { text: "Sin spam ni flood - 60 mensajes m�ximo" },
+      { text: "Reacciones vinculadas a la canci�n activa" },
+      { text: "Un emoji por usuario y canci�n" },
       { text: "Mensajes del sistema en rosa neon" },
       { text: "Chat sincronizado entre todas las pestanas" },
     ],
@@ -62,10 +62,10 @@ const RULES = [
     label: "Sistema Fama",
     subtitle: "XP y niveles",
     items: [
-      { text: "Bingo +150 XP - Linea +60 XP" },
-      { text: "Set DJ +20 XP - Cancion +10 XP" },
+      { text: "Bingo +150 XP - Línea +60 XP" },
+      { text: "Set DJ +20 XP - Canción +10 XP" },
       { text: "Reaccion recibida +5 XP" },
-      { text: "7 niveles: Novato Cosmico a Leyenda del Festival" },
+      { text: "7 niveles: Novato C�smico a Leyenda del Festival" },
       { text: "9 insignias coleccionables en tu perfil" },
       { text: "Ranking de leyendas basado en bingos totales" },
     ],
@@ -81,10 +81,10 @@ const RULES = [
     items: [
       { text: "Respeta a todos los asistentes siempre" },
       { text: "Nombre de usuario apropiado - sin ofensas" },
-      { text: "Todo funciona entre pestanas automaticamente" },
-      { text: "Todo local - ningun dato sale del navegador" },
+      { text: "Todo funciona entre pestanas autom�ticamente" },
+      { text: "Todo local - ning�n dato sale del navegador" },
       { text: "Modo proyector para pantallas grandes" },
-      { text: "Supabase opcional para sincronizacion cruzada" },
+      { text: "Supabase opcional para sincronizaci�n cruzada" },
     ],
   },
   {
@@ -96,9 +96,9 @@ const RULES = [
     label: "El Host",
     subtitle: "Administracion",
     items: [
-      { text: "Acceso: Anita_sorrita o password + Soy el host" },
-      { text: "Control total: bombo, rotacion, expulsion DJs" },
-      { text: "Sorteo cosmico para elegir proximo DJ" },
+      { text: "Acceso: Anita_sorrita o password uwu.777" },
+      { text: "Control total: bombo, rotaci�n, expulsi�n DJs" },
+      { text: "Sorteo c�smico para elegir pr�ximo DJ" },
       { text: "La sala funciona mientras el host este activo" },
       { text: "Puede mover o eliminar canciones de la cola" },
       { text: "Gestiona la partida de bingo (pausar, reiniciar)" },
@@ -147,7 +147,7 @@ export default function RulesPanel({ onClose }) {
             </div>
             <div>
               <h2 className="text-2xl font-black uppercase italic tracking-tight text-white">
-                Protocolo <span className="text-gradient-pink">Cosmico</span>
+                Protocolo <span className="text-gradient-pink">C�smico</span>
               </h2>
               <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">Reglas del Festival</p>
             </div>
@@ -246,7 +246,7 @@ export default function RulesPanel({ onClose }) {
             <p className="text-[9px] font-semibold uppercase tracking-widest text-zinc-600">Anita Festival</p>
             <div className="h-px w-8 opacity-30" style={{ background: "linear-gradient(to left, transparent, #ec4899)" }} />
           </div>
-          <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-700">La diversion es el unico requisito</p>
+          <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-700">la diversi�n es el unico requisito</p>
         </div>
       </motion.div>
     </div>

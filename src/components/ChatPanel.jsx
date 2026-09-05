@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, MessageSquare, Heart, Star, Zap, PartyPopper, Sparkles } from "lucide-react";
 
@@ -46,6 +46,8 @@ export default function ChatPanel({ messages, onSend, onReact, disabled }) {
     }
   };
 
+  const formatTime=(t)=>new Date(t).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
+  const showTimestamp=(m,i)=>{if(i===0)return true;const p=messages[i-1];return(m.time-p.time)>300000||p.type==="song_change";};
   return (
     <div
       className="relative flex flex-col overflow-hidden rounded-3xl border border-white/[0.06]"
@@ -96,6 +98,15 @@ export default function ChatPanel({ messages, onSend, onReact, disabled }) {
         style={{ scrollBehavior: "smooth" }}
       >
         {messages.map((msg, i) => {
+          if (showTimestamp(msg, i)) {
+            return (
+              <div key={msg.id} className="flex items-center gap-2 my-3 px-4">
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
+                <span className="text-[7px] font-bold text-zinc-600 uppercase tracking-widest">{formatTime(msg.time)}</span>
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
+              </div>
+            );
+          }
           if (msg.type === "system") {
             return (
               <motion.div
@@ -139,7 +150,7 @@ export default function ChatPanel({ messages, onSend, onReact, disabled }) {
                     style={{ background: "#a855f7", boxShadow: "0 0 8px #a855f7" }}
                   />
                   <span className="text-[8px] font-bold uppercase tracking-widest text-purple-400">
-                    Nueva cancion
+                    Nueva canción
                   </span>
                 </div>
                 <p className="text-[10px] font-bold text-white text-center leading-snug px-4">
