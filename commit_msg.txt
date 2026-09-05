@@ -1,9 +1,0 @@
-feat: redesign cosmic layout - planetario musical
-
-- DJ Booth as hero section with shimmer animation on play button
-- Bingo + Chat in 2-column grid layout
-- Reduced spacing (mb-4, gap-4) for less scrolling
-- Chat max-height 420px for compact design
-- DjBoothCard: smaller avatar (88px), reduced padding
-- New cosmic CSS animations (orbital-glow, twinkle, nebula-pulse)
-- Hero cosmic styling with conic gradient animation
