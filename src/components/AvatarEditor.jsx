@@ -1,4 +1,4 @@
-﻿﻿import { useState } from "react";
+import { useState } from "react";
 import { Dices, RotateCcw, X } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
@@ -191,9 +191,9 @@ export default function AvatarEditor({ config, onSave, onClose }) {
         <div className="mb-4 flex items-start justify-between">
           <div>
             <h2 className="text-lg font-black uppercase tracking-tighter">
-              DiseÃ±a tu <span className="text-pink-500">avatar cÃ³smico</span>
+              Diseña tu <span className="text-pink-500">avatar cósmico</span>
             </h2>
-            <p className="text-[10px] text-zinc-500">La fiesta te mirarÃ¡ asÃ­ ðŸ‘€</p>
+            <p className="text-[10px] text-zinc-500">La fiesta te mirará así‘€</p>
           </div>
           <button onClick={onClose} className="rounded-full p-2 text-zinc-500 transition-colors hover:bg-white/10 hover:text-white">
             <X size={16} />

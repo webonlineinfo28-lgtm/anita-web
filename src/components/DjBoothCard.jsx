@@ -96,7 +96,7 @@ export default function DjBoothCard({
           </div>
 
           <h2 className="mt-1 truncate text-2xl font-black uppercase tracking-tighter">
-            {currentDj || "ó"}
+            {currentDj || "DJ Vac√≠o"}
           </h2>
 
           <div className="mt-2 flex items-center gap-2 text-zinc-300">
