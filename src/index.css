@@ -279,6 +279,119 @@
   50% { opacity: 0.6; box-shadow: 0 0 8px var(--color-emerald-glow); }
 }
 
+
+/* ═══════════════════════════════════════════════════════════
+   NEW COSMIC ANIMATIONS - Planetario Layout
+   ═══════════════════════════════════════════════════════════ */
+
+/* Orbital glow - para elementos que parecen planetas */
+@keyframes orbital-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3), 0 0 40px rgba(168, 85, 247, 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.4), 0 0 60px rgba(236, 72, 153, 0.15);
+  }
+}
+
+.planet-orbital {
+  animation: orbital-glow 4s ease-in-out infinite;
+}
+
+/* Twinkle stars - para decoraciones estelares */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.star-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Nebula pulse - para fondos de secciones */
+@keyframes nebula-pulse {
+  0%, 100% { 
+    background-position: 0% 50%;
+    filter: brightness(1);
+  }
+  50% { 
+    background-position: 100% 50%;
+    filter: brightness(1.1);
+  }
+}
+
+.nebula-bg {
+  animation: nebula-pulse 8s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
+/* Cosmic section dividers */
+.cosmic-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(168, 85, 247, 0.5) 20%, 
+    rgba(236, 72, 153, 0.8) 50%, 
+    rgba(168, 85, 247, 0.5) 80%, 
+    transparent 100%
+  );
+}
+
+.cosmic-divider::before {
+  content: "✦";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(236, 72, 153, 0.8);
+  font-size: 12px;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+/* Hero section cosmic glow */
+.hero-cosmic {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-cosmic::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, 
+    rgba(236, 72, 153, 0.1) 0%, 
+    rgba(168, 85, 247, 0.05) 40%, 
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.hero-cosmic::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(168, 85, 247, 0.1) 60deg,
+    transparent 120deg,
+    rgba(236, 72, 153, 0.1) 180deg,
+    transparent 240deg,
+    rgba(34, 211, 238, 0.1) 300deg,
+    transparent 360deg
+  );
+  animation: rotate 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }

@@ -63,7 +63,7 @@ export default function DjBoothCard({
   const isHostPlayer = isAdmin && currentDj === sessionUser;
 
   return (
-    <div className="glass-card relative overflow-hidden rounded-[2.5rem] p-6">
+    <div className="glass-card relative overflow-hidden rounded-2xl p-4">
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={{
@@ -73,7 +73,7 @@ export default function DjBoothCard({
 
       <div className="relative z-10 flex items-center gap-5">
         <div className="relative shrink-0">
-          <Avatar config={djAvatar} size={104} live />
+          <Avatar config={djAvatar} size={88} live />
           <span
             className="absolute -inset-1.5 rounded-full border-2"
             style={{ borderColor: `${accent}66` }}

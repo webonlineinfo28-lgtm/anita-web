@@ -175,8 +175,9 @@ function AppAuthenticated({ session, onLogout }) {
           onProfile={() => setShowProfile(true)}
         />
 
-        <main className="max-w-[1400px] mx-auto grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-                    <section className="xl:col-span-6 flex flex-col gap-6">
+                <main className="max-w-[1600px] mx-auto px-4 pb-8">
+          {/* DJ BOOTH - EL SOL CENTRAL */}
+          <section className="mb-4">
             <DjBoothCard
               currentDj={room.dj}
               djAvatar={room.avatars[room.dj] || {}}
@@ -195,67 +196,34 @@ function AppAuthenticated({ session, onLogout }) {
               reactionsTotal={room.reactionsTotal}
               bursts={room.bursts}
             />
-
-            <ChatPanel
-              messages={room.messages}
-              avatars={room.avatars}
-              onSend={room.sendMessage}
-              onReact={room.react}
-              trackReactions={room.trackReactions}
-            />
-
             {isHostPlayer && room.currentTrack && (
-              <div className="flex gap-3 justify-center">
-                <button
-                  onClick={room.togglePlay}
-                  className="px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-600 to-purple-600 text-white font-black text-xs uppercase tracking-widest transition-all hover:from-pink-500 hover:to-purple-500 flex items-center gap-2 shadow-lg shadow-pink-600/20"
-                >
-                  {room.isPlaying ? <Pause size={14} /> : <Play size={14} />}
+              <div className="flex gap-4 justify-center mt-6">
+                <button onClick={room.togglePlay} className="px-8 py-4 rounded-full bg-gradient-to-r from-pink-600 via-purple-600 to-pink-600 bg-[length:200%_100%] text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-pink-500/40 transition-all hover:shadow-pink-500/60 hover:scale-105 animate-[shimmer_2s_ease-in-out_infinite]">
+                  {room.isPlaying ? <Pause size={18} className="inline mr-2" /> : <Play size={18} className="inline mr-2" />}
                   {room.isPlaying ? "Pausar" : "Reproducir"}
                 </button>
-                <button
-                  onClick={room.playNext}
-                  className="px-5 py-2.5 rounded-full bg-zinc-800/50 border border-white/10 text-white font-black text-xs uppercase tracking-widest transition-all hover:bg-zinc-700/60 flex items-center gap-2"
-                >
-                  <SkipForward size={14} /> Saltar
+                <button onClick={room.playNext} className="px-8 py-4 rounded-full bg-white/10 border border-white/20 text-white font-black text-sm uppercase tracking-widest backdrop-blur-md transition-all hover:bg-white/20 hover:scale-105">
+                  <SkipForward size={18} className="inline mr-2" /> Saltar
                 </button>
               </div>
-                        )}
+            )}
           </section>
-
-          <section className="xl:col-span-6 flex flex-col gap-6">
-            <PlayerPanel
-              playlist={room.playlist}
-              history={room.history}
-              currentTrack={room.currentTrack}
-              isPlaying={room.isPlaying}
-              isAdmin={isAdmin}
-              inputUrl={inputUrl}
-              setInputUrl={setInputUrl}
-              onAddSong={addSong}
-              isLoading={false}
-              error={addError}
-              onPlayNext={room.playNext}
-              onTogglePlay={room.togglePlay}
-              onSelectTrack={room.setCurrentTrack}
-              onRemoveSong={(id) => room.removeSong(id)}
-              user={user}
-
-            />
-
-            <BingoPanel
-              bingo={bingo}
-              avatars={room.avatars}
-                            isAdmin={isAdmin}
-            />
-
-            <RankingPanel
-              permanentCounts={permanentCounts}
-              winners={bingoWinners}
-              avatars={room.avatars}
-            />
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+            <div>
+              <BingoPanel bingo={bingo} avatars={room.avatars} isAdmin={isAdmin} />
+            </div>
+            <div className="flex flex-col" style={{ maxHeight: "420px" }}>
+              <ChatPanel messages={room.messages} avatars={room.avatars} onSend={room.sendMessage} onReact={room.react} trackReactions={room.trackReactions} />
+            </div>
+          </section>
+          <section className="mb-4">
+            <PlayerPanel playlist={room.playlist} history={room.history} currentTrack={room.currentTrack} isPlaying={room.isPlaying} isAdmin={isAdmin} inputUrl={inputUrl} setInputUrl={setInputUrl} onAddSong={addSong} isLoading={false} error={addError} onPlayNext={room.playNext} onTogglePlay={room.togglePlay} onSelectTrack={room.setCurrentTrack} onRemoveSong={(id) => room.removeSong(id)} user={user} />
+          </section>
+          <section className="mb-4">
+            <RankingPanel permanentCounts={permanentCounts} winners={bingoWinners} avatars={room.avatars} />
           </section>
         </main>
+        <style>{`@keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }`}</style>
       </div>
 
       <AnimatePresence>
@@ -299,7 +267,4 @@ function AppAuthenticated({ session, onLogout }) {
 }
 
 export default App;
-
-
-
 
