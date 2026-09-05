@@ -17,7 +17,7 @@ npm test          # 27 tests (bingo + avatares + cabina + chat + fama)
 ## 🎧 La Cabina (plug.dj style)
 
 - **DJ actual**: avatar gigante con glow neón (su color de acento), corona si es host, canción en el aire y barra de progreso.
-- **Lista de espera**: cada usuario puede *“Subir a la cabina”* o *“Salir”*. Al terminar una canción, **la cola rota automáticamente** y las canciones del siguiente DJ saltan al frente (`bumpSongsToFront`).
+- **Lista de espera**: cada usuario puede _“Subir a la cabina”_ o _“Salir”_. Al terminar una canción, **la cola rota automáticamente** y las canciones del siguiente DJ saltan al frente (`bumpSongsToFront`).
 - **Sorteo cósmico 🎡** (host): ruleta animada de avatares que elige al próximo DJ al azar.
 - El host puede expulsar a cualquier DJ de la cola.
 
@@ -25,7 +25,7 @@ npm test          # 27 tests (bingo + avatares + cabina + chat + fama)
 
 - Editor con pestañas: **Cara** (8 pieles, 6 ojos, 4 cejas, 7 bocas), **Pelo** (8 peinados × 10 colores), **Ropa** (6 atuendos), **Extras** (6 accesorios, 7 sombreros incl. corona/halo/cascos) y **Mascota** (5 compañeros).
 - Botón **🎲 Aleatorio** y **↺ Reset**. Se crean **sin imágenes**: cada avatar es SVG generado por `lib/avatars.js`.
-- Seguridad: el config del usuario solo contiene *claves* del catálogo — nunca entra texto libre al SVG (testeado contra inyección).
+- Seguridad: el config del usuario solo contiene _claves_ del catálogo — nunca entra texto libre al SVG (testeado contra inyección).
 - Visible en: login, header, cabina, lista de espera, chat y ranking.
 
 ## 💬 Chat + reacciones
@@ -49,10 +49,10 @@ npm test          # 27 tests (bingo + avatares + cabina + chat + fama)
 
 ## 🔐 Roles
 
-| Rol | Cómo entrar | Permisos |
-|---|---|---|
-| Invitado | Cualquier nombre | Ver sala, chat, reacciones, su cartón |
-| Host | *“Soy el host”* + contraseña | Bombo, gestionar cola, sorteo, expulsar DJs |
+| Rol      | Cómo entrar                  | Permisos                                    |
+| -------- | ---------------------------- | ------------------------------------------- |
+| Invitado | Cualquier nombre             | Ver sala, chat, reacciones, su cartón       |
+| Host     | _“Soy el host”_ + contraseña | Bombo, gestionar cola, sorteo, expulsar DJs |
 
 Contraseña vía `.env` (`VITE_ADMIN_PASSWORD`, fallback `uwu.777`).
 
@@ -79,8 +79,6 @@ src/
 
 - **Local (siempre)**: `localStorage` + eventos `storage` → pestañas del mismo navegador al instante (pantalla grande + host).
 - **Multidispositivo (opcional, gratis)**: proyecto Supabase gratis + tabla `festival_state` (SQL en la v1 del README histórico) y claves `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` en `.env`. Sin claves, todo funciona igual en local.
-
-
 
 ---
 
@@ -114,11 +112,11 @@ vercel
 
 En **Project Settings → Environment Variables**:
 
-| Variable | Valor |
-|----------|-------|
-| `VITE_ADMIN_PASSWORD` | `tu-contraseña-secreta` |
-| `VITE_SUPABASE_URL` | `https://xyztuvwxyz.supabase.co` *(opcional)* |
-| `VITE_SUPABASE_ANON_KEY` | `eyJhbGc...` *(opcional)* |
+| Variable                 | Valor                                         |
+| ------------------------ | --------------------------------------------- |
+| `VITE_ADMIN_PASSWORD`    | `tu-contraseña-secreta`                       |
+| `VITE_SUPABASE_URL`      | `https://xyztuvwxyz.supabase.co` _(opcional)_ |
+| `VITE_SUPABASE_ANON_KEY` | `eyJhbGc...` _(opcional)_                     |
 
 > ⚠️ Después de añadir variables, haz **Redeploy**.
 
@@ -137,6 +135,7 @@ Sin Supabase, la app funciona perfectamente sincronizando **solo pestañas del m
 **Paso 2:** Crea nuevo proyecto y espera a que esté listo
 
 **Paso 3:** En SQL Editor, ejecuta:
+
 ```sql
 -- Contenido en supabase/migrations/001_create_festival_state.sql
 CREATE EXTENSION IF NOT EXISTS uuid-ossp;
@@ -154,6 +153,7 @@ CREATE INDEX IF NOT EXISTS idx_festival_state_updated_at ON festival_state (upda
 ```
 
 **Paso 4:** Ve a **Settings → API** y copia:
+
 - Project URL → `VITE_SUPABASE_URL`
 - `anon` key → `VITE_SUPABASE_ANON_KEY`
 
@@ -163,16 +163,17 @@ CREATE INDEX IF NOT EXISTS idx_festival_state_updated_at ON festival_state (upda
 
 ## 🔧 Troubleshooting
 
-| Problema | Solución |
-|----------|----------|
-| Error 404 en Vercel | Asegúrate de que `vite.config.js` tiene `base: "./"` |
-| Supabase no conecta | Verifica las claves y que el SQL se ejecutó correctamente |
-| Build falla | Ejecuta `npm install` localmente y verifica que funciona |
-| Contraseña host no funciona | Verifica `VITE_ADMIN_PASSWORD` en variables de entorno |
+| Problema                    | Solución                                                  |
+| --------------------------- | --------------------------------------------------------- |
+| Error 404 en Vercel         | Asegúrate de que `vite.config.js` tiene `base: "./"`      |
+| Supabase no conecta         | Verifica las claves y que el SQL se ejecutó correctamente |
+| Build falla                 | Ejecuta `npm install` localmente y verifica que funciona  |
+| Contraseña host no funciona | Verifica `VITE_ADMIN_PASSWORD` en variables de entorno    |
 
 ---
 
 Hecho con 💜 para la comunidad.
+
 ## ☁️ Vercel
 
-Proyecto ya enlazado (`.vercel/`). Build `npm run build`, output `dist`, variables de entorno en *Settings → Environment Variables*. 🎉
+Proyecto ya enlazado (`.vercel/`). Build `npm run build`, output `dist`, variables de entorno en _Settings → Environment Variables_. 🎉
