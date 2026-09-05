@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports: ["3000:80"]
+    restart: unless-stopped
+  supabase:
+    image: supabase/postgres:15.1.0.117
+    ports: ["5432:5432"]
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes: [supabase-db:/var/lib/postgresql/data]
+volumes:
+  supabase-db:

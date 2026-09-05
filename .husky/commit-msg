@@ -1,0 +1,16 @@
+#!/bin/sh
+# Hook para validar formato de commits
+
+COMMIT_MSG=$(cat "$1")
+TYPES="feat|fix|docs|style|refactor|perf|test|chore|ui|hotfix"
+
+# Verificar formato: tipo(alcance): descripcion
+if ! echo "$COMMIT_MSG" | grep -qE "^($TYPES)(\([a-z0-9-]+\))?: .+"; then
+  echo ""
+  echo "Commit invalido! Formato esperado: tipo(alcance): descripcion"
+  echo "Tipos: feat, fix, docs, style, refactor, perf, test, chore, ui, hotfix"
+  exit 1
+fi
+
+echo "Formato de commit valido"
+exit 0
