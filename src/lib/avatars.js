@@ -1,7 +1,7 @@
-// ---------------------------------------------------------------------------
-// Sistema de AVATARES procedentales (sin imágenes externas).
+﻿// ---------------------------------------------------------------------------
+// Sistema de AVATARES procedenciales (sin imÃ¡genes externas).
 // El config del usuario solo contiene CLAVES; cada clave se resuelve contra
-// los catálogos de abajo, así que ningún dato libre llega al SVG.
+// los catÃ¡logos de abajo, asÃ­ que ningÃºn dato libre llega al SVG.
 // ---------------------------------------------------------------------------
 
 export const AVATAR_PALETTES = {
@@ -94,11 +94,11 @@ export const HATS = [
 ];
 export const PETS = {
   none: null,
-  cat: "🐱",
-  owl: "🦉",
-  star: "⭐",
-  blob: "👾",
-  ghost: "👻",
+  cat: "ðŸ±",
+  owl: "ðŸ¦‰",
+  star: "â­",
+  blob: "ðŸ‘¾",
+  ghost: "ðŸ‘»",
 };
 
 export const AVATAR_DEFAULTS = {
@@ -121,7 +121,7 @@ const pickKey = (obj) => {
   return keys[Math.floor(Math.random() * keys.length)];
 };
 
-// Genera un avatar aleatorio válido.
+// Genera un avatar aleatorio vÃ¡lido.
 export function randomAvatar() {
   return {
     skin: pick(Object.keys(AVATAR_PALETTES.skin)),
@@ -168,12 +168,12 @@ export function normalizeAvatar(cfg) {
   };
 }
 
-// Une dos configs (el override gana sólo en los campos presentes).
+// Une dos configs (el override gana sÃ³lo en los campos presentes).
 export function mergeAvatar(base, override) {
   return normalizeAvatar({ ...base, ...(override || {}) });
 }
 
-// --- Resolución de colores ---
+// --- ResoluciÃ³n de colores ---
 const colorOf = (paletteKey, k) =>
   (AVATAR_PALETTES[paletteKey] && AVATAR_PALETTES[paletteKey][k]) ||
   Object.values(AVATAR_PALETTES[paletteKey])[0];
@@ -182,7 +182,7 @@ const hairOf = (c) => colorOf("hair", c.hairColor);
 const accentOf = (c) => colorOf("accent", c.accent);
 const outfitOf = (c) => colorOf("outfit", c.outfit);
 
-// --- Piezas de dibujo (todas inyectan valores del catálogo, nunca datos libres) ---
+// --- Piezas de dibujo (todas inyectan valores del catÃ¡logo, nunca datos libres) ---
 function body(c) {
   const color = outfitOf(c);
   const skin = skinOf(c);

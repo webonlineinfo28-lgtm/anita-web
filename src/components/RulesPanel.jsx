@@ -96,7 +96,7 @@ const RULES = [
     label: "El Host",
     subtitle: "Administracion",
     items: [
-      { text: "Acceso: Anita_sorrita o password uwu.777" },
+      { text: "Acceso: Anita_sorrita o password uwu777" },
       { text: "Control total: bombo, rotaci�n, expulsi�n DJs" },
       { text: "Sorteo c�smico para elegir pr�ximo DJ" },
       { text: "La sala funciona mientras el host este activo" },

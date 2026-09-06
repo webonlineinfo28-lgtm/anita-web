@@ -18,7 +18,7 @@ export default function LoginScreen({ onLogin }) {
     await new Promise((r) => setTimeout(r, 600));
     onLogin({
       name: name.trim().slice(0, 20),
-      isHost: isHostMode && hostKey.trim() === "uwu.777",
+      isHost: isHostMode && hostKey.trim() === "uwu777",
     });
   };
 
