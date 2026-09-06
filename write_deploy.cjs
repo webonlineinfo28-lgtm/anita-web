@@ -1,4 +1,7 @@
-name: Deploy to Vercel
+const fs = require('fs');
+const path = 'C:\\Users\\rbrub\\Desktop\\anita-web - copia (2)\\.github\\workflows\\deploy.yml';
+
+const content = `name: Deploy to Vercel
 
 # DISABLED due to Vercel plan limit - re-enable tomorrow
 # on:
@@ -39,10 +42,14 @@ jobs:
         run: npm install -g vercel
 
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${ secrets.VERCEL_TOKEN }
+        run: vercel pull --yes --environment=production --token=\${ secrets.VERCEL_TOKEN }
 
       - name: Build Project Artifacts
-        run: vercel build --prod --token=${ secrets.VERCEL_TOKEN }
+        run: vercel build --prod --token=\${ secrets.VERCEL_TOKEN }
 
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --prod --token=${ secrets.VERCEL_TOKEN }
+        run: vercel deploy --prebuilt --prod --token=\${ secrets.VERCEL_TOKEN }
+`;
+
+fs.writeFileSync(path, content);
+console.log('deploy.yml written successfully');
