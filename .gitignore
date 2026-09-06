@@ -6,3 +6,9 @@ coverage/
 .playwright/
 .vscode-test/
 *.log
+playwright-report/
+test-results/
+write_deploy.cjs
+write_deploy.js
+write_deploy.py
+,

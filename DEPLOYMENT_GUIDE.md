@@ -3,12 +3,14 @@
 ## Supabase (Sincronización Multidispositivo)
 
 ### Proyecto Configurado ✅
+
 - **Proyecto ID:** `kvplwylfoterjmajnhmo`
 - **Nombre:** AnitaMusic
 - **Región:** us-east-1
 - **Estado:** ACTIVE
 
 ### Tabla `festival_state` ✅
+
 ```sql
 CREATE TABLE festival_state (
   id TEXT PRIMARY KEY DEFAULT 'main',
@@ -18,8 +20,9 @@ CREATE TABLE festival_state (
 ```
 
 ### RLS Policies ✅
+
 - `Anyone can read festival_state` (SELECT)
-- `Anyone can update festival_state` (UPDATE)
+- `Anyone can write festival_state` (INSERT/UPDATE — necesaria para el upsert REST)
 
 ---
 
@@ -34,24 +37,30 @@ CREATE TABLE festival_state (
    - **Project URL** → `VITE_SUPABASE_URL`
    - **anon public** key → `VITE_SUPABASE_ANON_KEY`
 
-### Paso 2: Configurar en Vercel
+### Paso 2: Configurar en Vercel (automático, sin gastar deploys)
 
-1. Ve a [Vercel Dashboard](https://vercel.com/webonlineinfo28-lgtm/anita-web/settings/environment-variables)
-2. Añade las variables:
+1. Los secrets ya están en GitHub (`gh secret list`): `VERCEL_TOKEN`, `VERCEL_ORG_ID`,
+   `VERCEL_PROJECT_ID`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_ADMIN_PASSWORD`.
+2. Sincroniza las variables de entorno de Vercel vía API (no crea deployments):
 
-| Nombre | Valor |
-|--------|-------|
-| `VITE_SUPABASE_URL` | `https://kvplwylfoterjmajnhmo.supabase.co` |
-| `VITE_SUPABASE_ANON_KEY` | `[tu anon key de Supabase]` |
+```bash
+gh workflow run "Setup Vercel Env" -R webonlineinfo28-lgtm/anita-web --ref master
+```
 
-3. Haz clic en **Save**
-4. Ve a **Deployments**
-5. Selecciona el deployment más reciente
-6. Haz clic en **···** → **Redeploy**
+3. O manualmente en el Dashboard [Vercel Settings → Environment Variables](https://vercel.com/webonlineinfo28-lgtm/anita-web/settings/environment-variables):
+
+| Nombre                   | Valor                                          |
+| ------------------------ | ---------------------------------------------- |
+| `VITE_SUPABASE_URL`      | `https://kvplwylfoterjmajnhmo.supabase.co`     |
+| `VITE_SUPABASE_ANON_KEY` | `[anon key de Supabase]`                       |
+
+4. El deploy se relanza con `npx vercel --prod` (o el workflow `deploy.yml` cuando Vercel
+   resetee el límite diario `api-deployments-free-per-day`).
 
 ### Paso 3: Verificar
 
 Después del redeploy, abre la app y verifica en DevTools:
+
 ```
 ✓ Conectado a Supabase (multi-dispositivo activo)
 ```
@@ -65,8 +74,9 @@ Sin las variables, la app funciona igual con localStorage (solo mismo navegador)
 La contraseña del host está en `VITE_ADMIN_PASSWORD` (default: `uwu777`).
 
 Para cambiarla, añade esta variable en Vercel:
-| Nombre | Valor |
-|--------|-------|
+
+| Nombre                | Valor                   |
+| --------------------- | ----------------------- |
 | `VITE_ADMIN_PASSWORD` | `tu-contraseña-secreta` |
 
 ---
@@ -74,18 +84,21 @@ Para cambiarla, añade esta variable en Vercel:
 ## Testing
 
 ### Local
+
 ```bash
 npm install
 npm run dev
 ```
 
 ### Tests
+
 ```bash
 npm test        # 27 tests
 npm run build   # Production build
 ```
 
 ### Preview
+
 ```bash
 npm run preview
 ```
@@ -94,9 +107,9 @@ npm run preview
 
 ## Troubleshooting
 
-| Problema | Solución |
-|----------|----------|
+| Problema            | Solución                                    |
+| ------------------- | ------------------------------------------- |
 | Supabase no conecta | Verificar credenciales en Vercel + Redeploy |
-| Build falla | `npm install` + `npm run build` |
-| Tests fallan | `npm test` para ver detalles |
-| 404 en Vercel | Verificar `base: "./"` en vite.config.js |
+| Build falla         | `npm install` + `npm run build`             |
+| Tests fallan        | `npm test` para ver detalles                |
+| 404 en Vercel       | Verificar `base: "./"` en vite.config.js    |

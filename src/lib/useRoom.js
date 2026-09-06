@@ -1,5 +1,5 @@
 ﻿import { useCallback, useEffect, useRef, useState } from "react";
-import { createLocalChannel } from "./sync.js";
+import { createChannel, mergeUserMaps } from "./sync.js";
 import { STORAGE_KEYS } from "./constants.js";
 import { createChatMessage, pushMessage, systemMessage } from "./chat-core.js";
 import { joinWaitlist, leaveWaitlist, rotateWaitlist } from "./waitlist-core.js";
@@ -32,8 +32,7 @@ export function useRoom(session) {
   const saveAvatar = useCallback((cfg) => {
     setAvatars((prev) => {
       const next = { ...prev, [user]: cfg };
-      const all = readJSON(STORAGE_KEYS.avatars, {});
-      writeJSON(STORAGE_KEYS.avatars, { ...all, ...next });
+      avatarsChannelRef.current?.push(next);
       return next;
     });
   }, [user]);
@@ -50,6 +49,8 @@ export function useRoom(session) {
   const [bursts, setBursts] = useState([]);
   
   const channelRef = useRef(null);
+  const avatarsChannelRef = useRef(null);
+  const statsChannelRef = useRef(null);
   const broadcastRef = useRef(null);
   const burstIdRef = useRef(0);
 
@@ -65,7 +66,8 @@ export function useRoom(session) {
   useEffect(() => {
     let cancelled = false;
     const init = async () => {
-      const channel = await createLocalChannel(STORAGE_KEYS.roomState);
+      // Canal híbrido de la sala: localStorage (pestañas) + Supabase (fila `room`).
+      const channel = createChannel(STORAGE_KEYS.roomState, "room");
       broadcastRef.current = (next) => channel.push(next);
 
       const snap = channel.snapshot();
@@ -95,15 +97,44 @@ export function useRoom(session) {
       });
 
       channelRef.current = channel;
+
+      // Canal híbrido de avatares (fila `avatars`).
+      const avatarsChannel = createChannel(STORAGE_KEYS.avatars, "avatars");
+      const snapAv = avatarsChannel.snapshot();
+      if (!cancelled && snapAv && Object.keys(snapAv).length) setAvatars(snapAv);
+      avatarsChannel.onState((remote) => {
+        if (!remote || typeof remote !== "object") return;
+        setAvatars((prev) => mergeUserMaps(prev, remote));
+      });
+      avatarsChannelRef.current = avatarsChannel;
+
+      // Canal híbrido de stats/fama (fila `stats`).
+      const statsChannel = createChannel(STORAGE_KEYS.stats, "stats");
+      const snapSt = statsChannel.snapshot();
+      if (!cancelled && snapSt && Object.keys(snapSt).length) setStatsMap(snapSt);
+      statsChannel.onState((remote) => {
+        if (!remote || typeof remote !== "object") return;
+        setStatsMap((prev) => mergeUserMaps(prev, remote));
+      });
+      statsChannelRef.current = statsChannel;
     };
     init();
-    return () => { cancelled = true; channelRef.current?.dispose(); };
+    return () => {
+      cancelled = true;
+      channelRef.current?.dispose();
+      avatarsChannelRef.current?.dispose();
+      statsChannelRef.current?.dispose();
+    };
   }, [user]);
 
   
   useEffect(() => { writeJSON(STORAGE_KEYS.playlist, playlist); }, [playlist]);
   useEffect(() => { writeJSON(STORAGE_KEYS.history, history); }, [history]);
-  useEffect(() => { writeJSON(STORAGE_KEYS.stats, statsMap); }, [statsMap]);
+  useEffect(() => {
+    writeJSON(STORAGE_KEYS.stats, statsMap);
+    // Push del mapa de fama completo al canal híbrido (fila `stats`).
+    statsChannelRef.current?.push(statsMap);
+  }, [statsMap]);
 
   // --- Chat ---
   const sendMessage = useCallback((text) => {

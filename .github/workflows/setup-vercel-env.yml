@@ -1,0 +1,31 @@
+name: Setup Vercel Env
+
+# Sincroniza variables de entorno de producción en Vercel vía API sin crear
+# deployments (no gasta el cupo diario de deploys). Ejecútalo manualmente:
+#   gh workflow run "Setup Vercel Env" -R webonlineinfo28-lgtm/anita-web --ref master
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  setup-env:
+    name: Sync Vercel Environment Variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sync env vars to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_ADMIN_PASSWORD: ${{ secrets.VITE_ADMIN_PASSWORD }}
+        run: node scripts/setup-vercel-env.mjs
