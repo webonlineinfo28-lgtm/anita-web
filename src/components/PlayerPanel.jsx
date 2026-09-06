@@ -114,7 +114,12 @@ export default function PlayerPanel(props) {
     onMoveUp,
     onSelectTrack,
     onTogglePlay,
+    // Video sync props for cross-device synchronization
+    played,
+    playedSeconds,
     onProgress,
+    onSeek,
+    onDuration,
   } = props;
 
   const displayList = showHistory ? history : playlist;
@@ -167,10 +172,13 @@ export default function PlayerPanel(props) {
                   width="100%"
                   height="100%"
                   playing={isPlaying}
+                  played={played}
                   controls={true}
                   onPlay={() => onTogglePlay(true)}
                   onPause={() => onTogglePlay(false)}
-                  onProgress={({ played }) => onProgress?.(played || 0)}
+                  onProgress={(state) => onProgress?.(state)}
+                  onSeek={(seconds) => onSeek?.(seconds)}
+                  onDuration={(duration) => onDuration?.(duration)}
                   onEnded={onPlayNext}
                   onError={() => onPlayNext()}
                   config={{

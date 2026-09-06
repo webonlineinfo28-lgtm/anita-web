@@ -183,6 +183,7 @@ function AppAuthenticated({ session, onLogout }) {
               djAvatar={room.avatars[room.dj] || {}}
               djTitle=""
               track={room.currentTrack}
+              played={room.played}
               isPlaying={room.isPlaying}
               isAdmin={isAdmin}
               sessionUser={user}
@@ -217,7 +218,7 @@ function AppAuthenticated({ session, onLogout }) {
             </div>
           </section>
           <section className="mb-4">
-            <PlayerPanel playlist={room.playlist} history={room.history} currentTrack={room.currentTrack} isPlaying={room.isPlaying} isAdmin={isAdmin} inputUrl={inputUrl} setInputUrl={setInputUrl} onAddSong={addSong} isLoading={false} error={addError} onPlayNext={room.playNext} onTogglePlay={room.togglePlay} onSelectTrack={room.setCurrentTrack} onRemoveSong={(id) => room.removeSong(id)} user={user} />
+            <PlayerPanel playlist={room.playlist} history={room.history} currentTrack={room.currentTrack} isPlaying={room.isPlaying} isAdmin={isAdmin} inputUrl={inputUrl} setInputUrl={setInputUrl} onAddSong={addSong} isLoading={false} error={addError} onPlayNext={room.playNext} onTogglePlay={room.togglePlay} onSelectTrack={room.setCurrentTrack} onRemoveSong={(id) => room.removeSong(id)} user={user} played={room.played} playedSeconds={room.playedSeconds} onProgress={room.onProgress} onSeek={room.onSeek} onDuration={room.onDuration} />
           </section>
           <section className="mb-4">
             <RankingPanel permanentCounts={permanentCounts} winners={bingoWinners} avatars={room.avatars} />

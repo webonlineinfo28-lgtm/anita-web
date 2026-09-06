@@ -47,6 +47,7 @@ export default function DjBoothCard({
   djTitle = "Novato Cósmico",
   track,
   progress = 0,
+  played = 0,
   isAdmin,
   sessionUser,
   waitlist = [],
@@ -121,7 +122,7 @@ export default function DjBoothCard({
             <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-pink-500 to-purple-500"
-                style={{ width: `${Math.min(100, progress)}%` }}
+                style={{ width: `${Math.min(100, (played * 100) || progress)}%` }}
               />
             </div>
           )}

@@ -43,6 +43,8 @@ export function useRoom(session) {
   const [history, setHistory] = useState(() => readJSON(STORAGE_KEYS.history, []));
   const [currentTrack, setCurrentTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [played, setPlayed] = useState(0); // 0-1 progress for cross-device sync
+  const [playedSeconds, setPlayedSeconds] = useState(0); // seconds for seek
   const [messages, setMessages] = useState([]);
   const [trackReactions, setTrackReactions] = useState({});
   const [statsMap, setStatsMap] = useState(() => readJSON(STORAGE_KEYS.stats, {}));
@@ -55,11 +57,11 @@ export function useRoom(session) {
   const burstIdRef = useRef(0);
 
   const roomStateRef = useRef({
-    dj, waitlist, playlist, history, currentTrack, isPlaying,
+    dj, waitlist, playlist, history, currentTrack, isPlaying, played, playedSeconds,
     messages, trackReactions, statsMap,
   });
   roomStateRef.current = {
-    dj, waitlist, playlist, history, currentTrack, isPlaying,
+    dj, waitlist, playlist, history, currentTrack, isPlaying, played, playedSeconds,
     messages, trackReactions, statsMap,
   };
 
@@ -78,6 +80,8 @@ export function useRoom(session) {
         if (Array.isArray(snap.history)) setHistory(snap.history);
         if (snap.currentTrack) setCurrentTrack(snap.currentTrack);
         if (typeof snap.isPlaying === "boolean") setIsPlaying(snap.isPlaying);
+        if (typeof snap.played === "number") setPlayed(snap.played);
+        if (typeof snap.playedSeconds === "number") setPlayedSeconds(snap.playedSeconds);
         if (Array.isArray(snap.messages)) setMessages(snap.messages);
         if (snap.trackReactions) setTrackReactions(snap.trackReactions);
         if (snap.statsMap) setStatsMap(snap.statsMap);
@@ -226,8 +230,18 @@ export function useRoom(session) {
     broadcastRef.current && broadcastRef.current({ history: [currentTrack, ...roomStateRef.current.history].slice(0, 20) });
     const nextQueue = roomStateRef.current.playlist.filter((t) => t.id !== currentTrack.id);
     setPlaylist(nextQueue);
-    setCurrentTrack(nextQueue[0] || null);
-    broadcastRef.current && broadcastRef.current({ playlist: nextQueue, currentTrack: nextQueue[0] || null });
+    const nextTrack = nextQueue[0] || null;
+    setCurrentTrack(nextTrack);
+    // Reset position and ensure playback starts on new track
+    setPlayed(0);
+    setPlayedSeconds(0);
+    broadcastRef.current && broadcastRef.current({
+      playlist: nextQueue,
+      currentTrack: nextTrack,
+      isPlaying: true,
+      played: 0,
+      playedSeconds: 0,
+    });
 
     const nextDj = nextQueue[0]?.addedBy || null;
     if (nextDj && nextDj !== dj) {
@@ -237,9 +251,17 @@ export function useRoom(session) {
     }
   }, [currentTrack, dj]);
 
-  const togglePlay = useCallback(() => {
-    setIsPlaying((p) => !p);
-    broadcastRef.current && broadcastRef.current({ isPlaying: !roomStateRef.current.isPlaying });
+  const togglePlay = useCallback((forceState) => {
+    setIsPlaying((p) => {
+      const next = forceState !== undefined ? forceState : !p;
+      // Broadcast with current position for accurate sync
+      broadcastRef.current && broadcastRef.current({
+        isPlaying: next,
+        played: roomStateRef.current.played,
+        playedSeconds: roomStateRef.current.playedSeconds,
+      });
+      return next;
+    });
   }, []);
 
     
@@ -263,6 +285,40 @@ export function useRoom(session) {
     broadcastRef.current && broadcastRef.current({ playlist: next });
   }, [user, dj, isAdmin]);
 
+  // --- Video position sync ---
+  // Track progress for cross-device sync (called by react-player onProgress)
+  const onProgress = useCallback((state) => {
+    const played = state.played ?? 0;
+    const playedSeconds = state.playedSeconds ?? 0;
+    setPlayed(played);
+    setPlayedSeconds(playedSeconds);
+    // Throttle broadcast to avoid flooding (every ~2 seconds worth of changes)
+    const now = Date.now();
+    if (now - (lastProgressBroadcastRef.current || 0) > 2000) {
+      lastProgressBroadcastRef.current = now;
+      broadcastRef.current && broadcastRef.current({ played, playedSeconds });
+    }
+  }, []);
+
+  // Handle seek events (called by react-player onSeek)
+  const onSeek = useCallback((seconds) => {
+    setPlayedSeconds(seconds);
+    setPlayed(seconds / (durationRef.current || 1));
+    broadcastRef.current && broadcastRef.current({
+      playedSeconds: seconds,
+      played: seconds / (durationRef.current || 1),
+    });
+  }, []);
+
+  // Store duration for seek calculations
+  const durationRef = useRef(0);
+  const onDuration = useCallback((duration) => {
+    durationRef.current = duration;
+  }, []);
+
+  // Track last progress broadcast time for throttling
+  const lastProgressBroadcastRef = useRef(0);
+
   const awardXp = useCallback((eventType) => {
     setStatsMap((prev) => addXp(prev, user, eventType));
   }, [user]);
@@ -272,6 +328,7 @@ export function useRoom(session) {
     dj, setDj, waitlist, joinCabina, leaveCabina, ejectFromCabina, rotateCabina,
     playlist, setPlaylist, history, setHistory,
     currentTrack, setCurrentTrack, isPlaying, setIsPlaying, togglePlay, playNext,
+    played, playedSeconds, onProgress, onSeek, onDuration,
     addSong, removeSong,
     sendMessage, messages, trackReactions, react,
     reactionsTotal: Object.values(trackReactions).reduce((s, u) => s + u.length, 0),
