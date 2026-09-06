@@ -1,8 +1,8 @@
-﻿// ---------------------------------------------------------------------------
-// Capa de sincronizaciÃ³n del festival.
+// ---------------------------------------------------------------------------
+// Capa de sincronización del festival.
 //
 // - TRANSPORTE LOCAL (siempre disponible, sin coste): localStorage + evento
-//   "storage". Sincroniza pestaÃ±as/ventanas del MISMO navegador al instante y
+//   "storage". Sincroniza pestañas/ventanas del MISMO navegador al instante y
 //   preserva el estado al recargar.
 //
 // - TRANSPORTE SUPABASE (opcional, gratis): si defines VITE_SUPABASE_URL y
@@ -61,8 +61,8 @@ function makeLocalTransport() {
   };
 }
 
-// Transporte opcional vÃ­a Supabase REST (sin SDK). No se activa si faltan
-// las claves. El creador de la tabla estÃ¡ documentado en el README.
+// Transporte opcional vía Supabase REST (sin SDK). No se activa si faltan
+// las claves. El creador de la tabla está documentado en el README.
 function makeSupabaseTransport(url, anonKey) {
   const endpoint = `${url.replace(/\/$/, "")}/rest/v1/festival_state`;
   const headers = {
@@ -82,7 +82,7 @@ function makeSupabaseTransport(url, anonKey) {
     );
     if (!res.ok) throw new Error(`Supabase GET ${res.status}`);
     const rows = await res.json();
-    return rows?.[0]?.payload ?? null;
+    return rows?.[0]?.state ?? null;
   };
 
   const pushOnce = async (state) => {
@@ -112,7 +112,7 @@ function makeSupabaseTransport(url, anonKey) {
           }
         }
       } catch (e) {
-        console.warn("Supabase poll fallÃ³ (se reintentarÃ¡):", e.message);
+        console.warn("Supabase poll falló (se reintentará):", e.message);
       } finally {
         polling = false;
       }
@@ -128,7 +128,7 @@ function makeSupabaseTransport(url, anonKey) {
       listeners.forEach((fn) => fn(remote));
     })
     .catch(() => {
-      /* sin conexiÃ³n inicial: se reintenta por polling */
+      /* sin conexión inicial: se reintenta por polling */
     });
 
   startPolling();
@@ -139,7 +139,7 @@ function makeSupabaseTransport(url, anonKey) {
     push(state) {
       last = state;
       pushOnce(state).catch((e) =>
-        console.warn("Supabase push fallÃ³ (se reintentarÃ¡):", e.message),
+        console.warn("Supabase push falló (se reintentará):", e.message),
       );
     },
     onState(cb) {
@@ -153,7 +153,7 @@ function makeSupabaseTransport(url, anonKey) {
   };
 }
 
-// Devuelve el transporte adecuado segÃºn el entorno.
+// Devuelve el transporte adecuado según el entorno.
 export async function createSyncTransport() {
   const url = import.meta.env.VITE_SUPABASE_URL;
   const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -168,7 +168,7 @@ export async function createSyncTransport() {
   return makeLocalTransport();
 }
 
-// Canal local genÃ©rico para comparticiÃ³n entre pestaÃ±as de CUALQUIER clave
+// Canal local genérico para compartición entre pestañas de CUALQUIER clave
 // (usado por el estado de la sala: chat, lista de espera, reacciones, fame).
 // La firma es igual que la del transporte del bingo: snapshot/push/onState.
 export function createLocalChannel(storageKey) {
