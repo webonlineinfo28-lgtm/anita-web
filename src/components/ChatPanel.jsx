@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect, Fragment } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, MessageSquare, Heart, Star, Zap, PartyPopper, Sparkles } from "lucide-react";
 
@@ -98,19 +98,11 @@ export default function ChatPanel({ messages, onSend, onReact, disabled }) {
         style={{ scrollBehavior: "smooth" }}
       >
         {messages.map((msg, i) => {
-          if (showTimestamp(msg, i)) {
-            return (
-              <div key={msg.id} className="flex items-center gap-2 my-3 px-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
-                <span className="text-[7px] font-bold text-zinc-600 uppercase tracking-widest">{formatTime(msg.time)}</span>
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
-              </div>
-            );
-          }
+          const showTag = showTimestamp(msg, i);
+          let body = null;
           if (msg.type === "system") {
-            return (
+            body = (
               <motion.div
-                key={i}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-center justify-center gap-3 py-1"
@@ -122,12 +114,9 @@ export default function ChatPanel({ messages, onSend, onReact, disabled }) {
                 <div className="h-px flex-1 opacity-20" style={{ background: "linear-gradient(to left, transparent, #ec4899)" }} />
               </motion.div>
             );
-          }
-
-          if (msg.type === "song_change") {
-            return (
+          } else if (msg.type === "song_change") {
+            body = (
               <motion.div
-                key={i}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="relative flex flex-col items-center gap-2 py-4"
@@ -158,16 +147,12 @@ export default function ChatPanel({ messages, onSend, onReact, disabled }) {
                 </p>
               </motion.div>
             );
-          }
-
-          if (msg.type === "reaction") {
+          } else if (msg.type === "reaction") {
             const songIdx = messages.slice(0, i).filter((m) => m.type === "song_change").length;
             const reactionKey = `${songIdx}-${REACTIONS.findIndex((r) => r.emoji === msg.emoji)}`;
             const isNew = localReactions[reactionKey];
-
-            return (
+            body = (
               <motion.div
-                key={i}
                 initial={isNew ? { scale: 0, opacity: 0 } : { opacity: 0.5, scale: 0.8 }}
                 animate={{ scale: 1, opacity: isNew ? 1 : 0.5 }}
                 exit={{ scale: 0, opacity: 0 }}
@@ -189,23 +174,34 @@ export default function ChatPanel({ messages, onSend, onReact, disabled }) {
                 </div>
               </motion.div>
             );
-          }
-
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="group"
-            >
-              <div
-                className="inline-flex flex-col rounded-2xl px-4 py-2.5"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
+          } else {
+            body = (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="group"
               >
-                <span className="text-[9px] font-bold text-pink-400/80 mb-0.5">{msg.user}</span>
-                <span className="text-[10px] font-medium text-zinc-200 leading-relaxed">{msg.text}</span>
-              </div>
-            </motion.div>
+                <div
+                  className="inline-flex flex-col rounded-2xl px-4 py-2.5"
+                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
+                >
+                  <span className="text-[9px] font-bold text-pink-400/80 mb-0.5">{msg.user}</span>
+                  <span className="text-[10px] font-medium text-zinc-200 leading-relaxed">{msg.text}</span>
+                </div>
+              </motion.div>
+            );
+          }
+          return (
+            <Fragment key={msg.id || i}>
+              {showTag ? (
+                <div className="flex items-center gap-2 my-3 px-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
+                  <span className="text-[7px] font-bold text-zinc-600 uppercase tracking-widest">{formatTime(msg.time)}</span>
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
+                </div>
+              ) : null}
+              {body}
+            </Fragment>
           );
         })}
       </div>

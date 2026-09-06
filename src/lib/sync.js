@@ -314,8 +314,9 @@ export function createChannel(storageKey, remoteRowId) {
     }
   }
 
-  // Cuando llega un estado remoto (otro dispositivo), fusionar con el local
-  // y avisar a los listeners. El guard anti-eco evita re-aplicar lo propio.
+  // Cuando llega un estado remoto (otro dispositivo), fusionar con el local,
+  // persistirlo (para sobrevivir a recargas) y avisar a los listeners.
+  // El guard anti-eco evita re-aplicar lo propio.
   const unsubRemote = remote?.onState((remoteState) => {
     if (!remoteState) return;
     const merged = mergeDomainStates(last || {}, remoteState);
@@ -323,6 +324,11 @@ export function createChannel(storageKey, remoteRowId) {
     if (json === lastJson) return; // sin cambios reales
     lastJson = json;
     last = merged;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(merged));
+    } catch (e) {
+      console.error("Error persistiendo remoto en", storageKey, e);
+    }
     listeners.forEach((fn) => fn(merged));
   });
 
