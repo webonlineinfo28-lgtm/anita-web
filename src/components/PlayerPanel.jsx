@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+﻿import { Suspense, lazy } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUpCircle,
@@ -16,7 +16,7 @@ import {
 
 const ReactPlayer = lazy(() => import("react-player"));
 
-// Tarjeta de una canción en la cola/historial.
+// Tarjeta de una canciÃ³n en la cola/historial.
 function TrackCard({
   track,
   isCurrent,
@@ -95,7 +95,7 @@ function TrackCard({
   );
 }
 
-// Panel principal de música: añadir canciones, reproducir y gestionar cola.
+// Panel principal de mÃºsica: aÃ±adir canciones, reproducir y gestionar cola.
 export default function PlayerPanel(props) {
   const {
     playlist,
@@ -121,8 +121,8 @@ export default function PlayerPanel(props) {
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="glass-card p-8">
-        {/* Añadir canción */}
+      <div className="glass-card rounded-2xl border border-pink-500/20 hero-epic p-8">
+        {/* AÃ±adir canciÃ³n */}
         <div className="mb-8 flex gap-4">
           <input
             value={inputUrl}
@@ -141,7 +141,7 @@ export default function PlayerPanel(props) {
                 ? "cursor-not-allowed opacity-50"
                 : "bg-pink-600 hover:bg-pink-500 hover:scale-105 active:scale-95"
             }`}
-            title="Añadir a la cola"
+            title="AÃ±adir a la cola"
           >
             {isLoading ? (
               <Loader2 size={20} className="animate-spin" />
@@ -189,7 +189,7 @@ export default function PlayerPanel(props) {
                 <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-zinc-900/40 to-black">
                   <Disc3 size={40} className="text-zinc-700" />
                   <p className="text-[9px] font-black uppercase tracking-widest text-zinc-700">
-                    Sin canción en el aire
+                    Sin canciÃ³n en el aire
                   </p>
                 </div>
               )}
@@ -224,7 +224,7 @@ export default function PlayerPanel(props) {
               className={`text-pink-500 ${!showHistory ? "animate-spin-slow" : ""}`}
             />
             <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">
-              {showHistory ? "Historial pasado" : "Gestión de playlist"}
+              {showHistory ? "Historial pasado" : "GestiÃ³n de playlist"}
             </span>
           </div>
           <button
@@ -246,8 +246,8 @@ export default function PlayerPanel(props) {
                 className="w-full py-8 text-center text-[9px] font-black uppercase italic text-zinc-800"
               >
                 {showHistory
-                  ? "Aún no hay historial"
-                  : "Lista vacía: ¡añade tu primera canción!"}
+                  ? "AÃºn no hay historial"
+                  : "Lista vacÃ­a: Â¡aÃ±ade tu primera canciÃ³n!"}
               </motion.div>
             ) : (
               displayList.map((track) => (

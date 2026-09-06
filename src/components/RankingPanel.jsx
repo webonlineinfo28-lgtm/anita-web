@@ -1,4 +1,4 @@
-import { Crown, Medal, Star, Trophy } from "lucide-react";
+﻿import { Crown, Medal, Star, Trophy } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
 import { levelFromXp } from "../lib/stats.js";
@@ -15,7 +15,7 @@ export default function RankingPanel({ permanentCounts, winners, avatars = {} })
   const lastWinner = winners?.slice().reverse().find((w) => w.winType === "bingo");
 
   return (
-    <div className="glass-card p-6">
+    <div className="glass-card rounded-2xl border border-pink-500/20 hero-epic p-6">
       <div className="mb-4 flex items-center justify-between px-2">
         <div className="flex items-center gap-2">
           <Trophy size={14} className="text-pink-500" />
@@ -74,15 +74,15 @@ export default function RankingPanel({ permanentCounts, winners, avatars = {} })
         </div>
       ) : (
         <p className="px-2 py-3 text-center text-[9px] font-black uppercase italic tracking-widest text-zinc-800">
-          Aún no hay leyendas… el primer bingo de la historia está por llegar
+          AÃºn no hay leyendasâ€¦ el primer bingo de la historia estÃ¡ por llegar
         </p>
       )}
 
       {lastWinner && (
         <div className="mt-3 border-t border-white/5 pt-3">
           <p className="truncate px-1 text-[8px] font-medium uppercase tracking-widest text-zinc-600">
-            Último bingo:{" "}
-            <span className="font-black text-pink-400">{lastWinner.user}</span> ·{" "}
+            Ãšltimo bingo:{" "}
+            <span className="font-black text-pink-400">{lastWinner.user}</span> Â·{" "}
             {new Date(lastWinner.timestamp).toLocaleString("es-ES", {
               day: "2-digit",
               month: "short",

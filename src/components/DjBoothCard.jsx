@@ -63,7 +63,7 @@ export default function DjBoothCard({
   const isHostPlayer = isAdmin && currentDj === sessionUser;
 
   return (
-    <div className="glass-card relative overflow-hidden rounded-2xl p-4">
+    <div className="glass-card relative overflow-hidden rounded-2xl p-4 border border-pink-500/20 hero-epic">
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={{
@@ -215,3 +215,4 @@ export default function DjBoothCard({
     </div>
   );
 }
+

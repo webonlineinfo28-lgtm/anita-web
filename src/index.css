@@ -1,3 +1,185 @@
+/* ═══════════════════════════════════════════════════════════
+   ANITA FESTIVAL - DESIGN SYSTEM 2.0
+   EPIC COSMIC THEME
+   ═══════════════════════════════════════════════════════════ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design Tokens */
+:root {
+  --color-pink-primary: #ec4899;
+  --color-pink-glow: rgba(236, 72, 153, 0.6);
+  --color-purple-primary: #a855f7;
+  --color-purple-glow: rgba(168, 85, 247, 0.6);
+  --color-cyan-primary: #22d3ee;
+  --color-cyan-glow: rgba(34, 211, 238, 0.6);
+}
+
+/* HERO EPIC GLOW ANIMATION */
+@keyframes epic-glow {
+  0%, 100% { 
+    box-shadow: 
+      0 0 30px var(--color-pink-glow),
+      0 0 60px rgba(168, 85, 247, 0.4),
+      inset 0 0 30px rgba(236, 72, 153, 0.1);
+  }
+  50% { 
+    box-shadow: 
+      0 0 50px var(--color-pink-glow),
+      0 0 100px rgba(168, 85, 247, 0.6),
+      inset 0 0 50px rgba(236, 72, 153, 0.2);
+  }
+}
+
+.hero-epic {
+  animation: epic-glow 3s ease-in-out infinite;
+}
+
+/* PARTICLE FLOAT */
+@keyframes float-up {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+.particle {
+  animation: float-up 15s linear infinite;
+}
+
+/* SPIN GLOW */
+@keyframes spin-glow {
+  0% { transform: rotate(0deg); filter: drop-shadow(0 0 10px var(--color-pink-primary)); }
+  50% { filter: drop-shadow(0 0 20px var(--color-purple-primary)); }
+  100% { transform: rotate(360deg); filter: drop-shadow(0 0 10px var(--color-pink-primary)); }
+}
+
+.spin-glow {
+  animation: spin-glow 4s linear infinite;
+}
+
+/* PULSE RING */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.pulse-ring {
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* NEON FLICKER */
+@keyframes neon-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+.neon-flicker {
+  animation: neon-flicker 4s linear infinite;
+}
+
+/* GRADIENT ANIMATE */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* BREATHE */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+
+/* ============================================================
+   Anita Festival - Design System 2.0
+   Professional Cosmic Theme - EPIC VERSION
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   CSS Custom Properties - Design Tokens
+   ============================================================ */
+:root {
+  /* Deep Space Colors */
+  --color-void: #030303;
+  --color-abyss: #0a0a0f;
+  --color-nebula: #12121a;
+  --color-stardust: #1a1a24;
+  
+  /* Primary Brand Colors */
+  --color-pink-primary: #ec4899;
+  --color-pink-glow: rgba(236, 72, 153, 0.6);
+  --color-pink-subtle: rgba(236, 72, 153, 0.15);
+  --color-pink-bright: #f472b6;
+  
+  --color-purple-primary: #a855f7;
+  --color-purple-glow: rgba(168, 85, 247, 0.6);
+  --color-purple-subtle: rgba(168, 85, 247, 0.15);
+  --color-purple-bright: #c084fc;
+  
+  --color-cyan-primary: #22d3ee;
+  --color-cyan-glow: rgba(34, 211, 238, 0.6);
+  --color-cyan-subtle: rgba(34, 211, 238, 0.12);
+  
+  --color-amber-primary: #f59e0b;
+  --color-amber-glow: rgba(245, 158, 11, 0.6);
+  --color-amber-subtle: rgba(245, 158, 11, 0.12);
+  
+  --color-emerald-primary: #34d399;
+  --color-emerald-glow: rgba(52, 211, 153, 0.6);
+  --color-emerald-subtle: rgba(52, 211, 153, 0.12);
+  
+  /* Text Hierarchy */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d4d4d8;
+  --color-text-muted: #a1a1aa;
+  --color-text-dim: #71717a;
+  
+  /* Glass Effects */
+  --glass-blur: 20px;
+  --glass-opacity: 0.08;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  
+  /* Border Radius Scale */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+  
+  /* Spacing Scale (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+}
 /* ============================================================
    Anita Festival - Design System
    Professional Cosmic Theme
@@ -360,6 +542,287 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at center, 
+
+
+/* ═══════════════════════════════════════════════════════════
+   EPIC COSMIC ANIMATIONS - Design System 2.0
+   ═══════════════════════════════════════════════════════════ */
+
+/* HERO DJ BOOTH - Epic Glow Pulse */
+@keyframes epic-glow {
+  0%, 100% { 
+    box-shadow: 
+      0 0 30px var(--color-pink-glow),
+      0 0 60px rgba(168, 85, 247, 0.4),
+      inset 0 0 30px rgba(236, 72, 153, 0.1);
+  }
+  50% { 
+    box-shadow: 
+      0 0 50px var(--color-pink-glow),
+      0 0 100px rgba(168, 85, 247, 0.6),
+      inset 0 0 50px rgba(236, 72, 153, 0.2);
+  }
+}
+
+.hero-epic {
+  animation: epic-glow 3s ease-in-out infinite;
+}
+
+/* PULSE RING - Onda expansiva */
+@keyframes pulse-ring {
+  0% { 
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% { 
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.pulse-ring {
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* FLOATING PARTICLES */
+@keyframes float-up {
+  0% { 
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { 
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.particle {
+  animation: float-up 15s linear infinite;
+}
+
+/* SPIN GLOW - Disco girando con luz */
+@keyframes spin-glow {
+  0% { 
+    transform: rotate(0deg);
+    filter: drop-shadow(0 0 10px var(--color-pink-primary));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px var(--color-purple-primary));
+  }
+  100% { 
+    transform: rotate(360deg);
+    filter: drop-shadow(0 0 10px var(--color-pink-primary));
+  }
+}
+
+.spin-glow {
+  animation: spin-glow 4s linear infinite;
+}
+
+/* STARDUST BURST - Explosión de estrellas */
+@keyframes stardust {
+  0% { 
+    transform: scale(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(2) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+.stardust {
+  animation: stardust 1s ease-out forwards;
+}
+
+/* NEON FLICKER */
+@keyframes neon-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+.neon-flicker {
+  animation: neon-flicker 4s linear infinite;
+}
+
+/* GRADIENT SHIFT */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* BORDER ORBIT */
+@keyframes border-orbit {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.border-orbit {
+  animation: border-orbit 8s linear infinite;
+}
+
+/* WAVE RIPPLE */
+@keyframes wave-ripple {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.ripple {
+  animation: wave-ripple 1.5s ease-out infinite;
+}
+
+/* GLOW PULSE ALTERNATE */
+@keyframes glow-pulse-alt {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--color-pink-glow);
+  }
+  50% {
+    box-shadow: 0 0 40px var(--color-purple-glow);
+  }
+}
+
+.glow-pulse-alt {
+  animation: glow-pulse-alt 2s ease-in-out infinite;
+}
+
+/* TEXT GLOW */
+@keyframes text-glow {
+  0%, 100% { 
+    text-shadow: 0 0 10px currentColor;
+  }
+  50% { 
+    text-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+  }
+}
+
+.text-glow {
+  animation: text-glow 2s ease-in-out infinite;
+}
+
+/* BREATHE */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* SHAKE */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* JELLY */
+@keyframes jelly {
+  0%, 100% { transform: scale(1, 1); }
+  25% { transform: scale(0.95, 1.05); }
+  50% { transform: scale(1.05, 0.95); }
+  75% { transform: scale(0.98, 1.02); }
+}
+
+.jelly {
+  animation: jelly 0.5s ease-in-out;
+}
+
+/* ============================================================
+   UTILITY CLASSES - Quick Epicity
+   ============================================================ */
+
+/* Glass Panel Premium */
+.glass-epic {
+  background: linear-gradient(135deg, rgba(20, 20, 30, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.5rem;
+}
+
+/* Gradient Border */
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--color-pink-primary), var(--color-purple-primary), var(--color-cyan-primary));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Glow Text */
+.glow-text {
+  text-shadow: 
+    0 0 10px currentColor,
+    0 0 20px currentColor,
+    0 0 30px currentColor;
+}
+
+/* Background Gradient Animated */
+.bg-gradient-animated {
+  background: linear-gradient(-45deg, var(--color-nebula), var(--color-stardust), #1a0a20, var(--color-abyss));
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* ============================================================
+   RESPONSIVE UTILITIES
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .hero-epic {
+    animation-duration: 2s;
+  }
+  
+  @keyframes epic-glow {
+    0%, 100% { 
+      box-shadow: 
+        0 0 15px var(--color-pink-glow),
+        0 0 30px rgba(168, 85, 247, 0.3);
+    }
+    50% { 
+      box-shadow: 
+        0 0 25px var(--color-pink-glow),
+        0 0 50px rgba(168, 85, 247, 0.5);
+    }
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
     rgba(236, 72, 153, 0.1) 0%, 
     rgba(168, 85, 247, 0.05) 40%, 
     transparent 70%

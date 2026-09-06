@@ -22,7 +22,7 @@ export default function ProfilePanel({ user, isAdmin, avatar, stats, onClose }) 
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="relative w-full max-w-sm overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900/90 p-6 shadow-2xl backdrop-blur-xl"
+        className="relative w-full max-w-sm overflow-hidden rounded-[2rem] border border-pink-500/20 bg-zinc-900/90 glass-card hero-epic p-6 shadow-2xl backdrop-blur-xl"
       >
         <div className="mb-4 flex items-start justify-between">
           <h2 className="text-lg font-black uppercase tracking-tighter">

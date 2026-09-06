@@ -31,7 +31,7 @@ export default function DjWheel({ users, avatars, onPick, onClose }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-[2rem] border border-white/10 bg-zinc-900/90 p-6 text-center shadow-2xl backdrop-blur-xl">
+      <div className="relative w-full max-w-md rounded-[2rem] border border-pink-500/20 bg-zinc-900/90 glass-card hero-epic p-6 text-center shadow-2xl backdrop-blur-xl">
         <div className="mb-2 flex items-start justify-between">
           <h2 className="text-lg font-black uppercase tracking-tighter">
             Sorteo <span className="text-amber-400">c�smico</span>

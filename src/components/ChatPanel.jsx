@@ -50,7 +50,7 @@ export default function ChatPanel({ messages, onSend, onReact, disabled }) {
   const showTimestamp=(m,i)=>{if(i===0)return true;const p=messages[i-1];return(m.time-p.time)>300000||p.type==="song_change";};
   return (
     <div
-      className="relative flex flex-col overflow-hidden rounded-3xl border border-white/[0.06]"
+      className="relative flex flex-col overflow-hidden rounded-3xl border border-pink-500/20 glass-card hero-epic"
       style={{
         height: "100%",
         background: "linear-gradient(180deg, rgba(10,10,15,0.95) 0%, rgba(8,8,12,0.98) 100%)",

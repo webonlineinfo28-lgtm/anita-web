@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Dices, RotateCcw, X } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
@@ -168,7 +168,7 @@ export default function AvatarEditor({ config, onSave, onClose }) {
         );
       case "pet":
         return (
-          <PickerRow label="Mascota compaÃ±era">
+          <PickerRow label="Mascota compaÃƒÂ±era">
             {Object.entries(PETS).map(([k, emoji]) => (
               <Chip
                 key={k}
@@ -187,13 +187,13 @@ export default function AvatarEditor({ config, onSave, onClose }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900/90 p-6 shadow-2xl backdrop-blur-xl">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-[2rem] border border-pink-500/20 bg-zinc-900/90 glass-card hero-epic p-6 shadow-2xl backdrop-blur-xl">
         <div className="mb-4 flex items-start justify-between">
           <div>
             <h2 className="text-lg font-black uppercase tracking-tighter">
-              Diseña tu <span className="text-pink-500">avatar cósmico</span>
+              DiseÃ±a tu <span className="text-pink-500">avatar cÃ³smico</span>
             </h2>
-            <p className="text-[10px] text-zinc-500">La fiesta te mirará así</p>
+            <p className="text-[10px] text-zinc-500">La fiesta te mirarÃ¡ asÃ­</p>
           </div>
           <button onClick={onClose} className="rounded-full p-2 text-zinc-500 transition-colors hover:bg-white/10 hover:text-white">
             <X size={16} />
