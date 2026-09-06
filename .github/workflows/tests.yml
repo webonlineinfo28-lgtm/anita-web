@@ -1,10 +1,10 @@
-﻿name: Tests
+name: Tests
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master, develop, autonoma-integration]
   pull_request:
-    branches: [master, develop]
+    branches: [master, develop, autonoma-integration]
 
 jobs:
   test:
