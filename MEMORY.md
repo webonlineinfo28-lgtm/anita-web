@@ -102,7 +102,31 @@ npm ci → npm test → npm run build → vercel pull --prod → vercel build --
 - Build de producción exitoso (`npm run build`).
 - Playwright configurado (tests e2e). El `playwright-report/` no debe subirse (gitignore).
 
-## 7. 🚧 Mejoras pensadas (futuras)
+## 7. 🎬 Sincronización de video (DJ Booth)
+
+### Arquitectura de sync de video
+- **Estado**: `played` (0-1 fracción) y `playedSeconds` (segundos exactos) en `useRoom.js`
+- **Eventos de react-player**:
+  - `onProgress`: actualiza estado local y broadcast throttled (cada 2s)
+  - `onSeek`: sincroniza seeks entre dispositivos inmediatamente
+  - `onDuration`: almacena duración para cálculos de seek
+- **Broadcast**: posición incluida en eventos `togglePlay` y `playNext` para consistencia
+- **DjBoothCard**: barra de progreso usa `played * 100` (fallback a `progress`)
+- **PlayerPanel**: recibe `played`, `playedSeconds`, `onProgress`, `onSeek`, `onDuration`
+- **Fallback**: sin posición remota, cada dispositivo reproduce localmente
+
+### Flujo de sincronización
+```
+Admin pausa en 2:30 → broadcast {isPlaying:false, played:0.375, playedSeconds:150}
+                                          ↓
+                              Supabase (fila "room")
+                                          ↓
+                           Polling 3s → Otros dispositivos
+                                          ↓
+                    ReactPlayer seeks to 2:30 + pausa
+```
+
+## 8. 🚧 Mejoras pensadas (futuras)
 
 - Columna `version` + trigger `updated_at` para control de concurrencia optimista.
 - Heartbeat de presencia para limpiar usuarios inactivos de la waitlist.
@@ -111,7 +135,7 @@ npm ci → npm test → npm run build → vercel pull --prod → vercel build --
 - Protección RLS más fina (p.ej. limitar escrituras por origen) — hoy es público a propósito.
 - VITE_ADMIN_PASSWORD: rotar periódicamente en GitHub Secrets + Vercel.
 
-## 8. 📋 Log de decisiones importantes
+## 9. 📋 Log de decisiones importantes
 
 | Fecha | Decisión |
 | ----- | -------- |
@@ -119,3 +143,4 @@ npm ci → npm test → npm run build → vercel pull --prod → vercel build --
 | 2026-09-06 | La sala social (chat/DJ/playlist/reacciones) NO se sincronizaba a Supabase (solo localStorage) → canales híbridos por dominio. |
 | 2026-09-06 | Límite Vercel `api-deployments-free-per-day` → deploy.yml deshabilitado temporalmente; env vars vía API (sin gastar deploys). |
 | 2026-09-06 | Deploy manual disponible: `npm run build && npx vercel --prod` (tras el reset del cupo). |
+| 2026-09-06 | **Sincronización de video profesional**: implementado sync de posición de video entre admin y usuarios con throttling, seek sync, y fallback a progreso local. |
