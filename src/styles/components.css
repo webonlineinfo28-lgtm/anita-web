@@ -1,0 +1,252 @@
+/* ============================================================
+   ANITA FESTIVAL 3.0 - COMPONENT STYLES
+   ============================================================ */
+
+/* === Glass Card === */
+.glass-card {
+  background: rgba(10, 10, 16, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(10, 10, 16, 0.85);
+}
+
+/* === Glass Card Heavy (modales, overlays, barras fijas) === */
+.glass-card-heavy {
+  background: rgba(10, 10, 16, 0.88);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  transition: all 0.2s ease;
+}
+.glass-card-heavy:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* === Glass Input === */
+.glass-input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  color: #f4f4f5;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.glass-input::placeholder {
+  color: #52525b;
+}
+.glass-input:focus {
+  border-color: rgba(236, 72, 153, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
+}
+
+/* === Glass Panel === */
+.glass-panel {
+  background: linear-gradient(180deg, rgba(15, 15, 25, 0.9) 0%, rgba(10, 10, 16, 0.95) 100%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 1.5rem;
+}
+
+/* === Gradient Border === */
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--cosmos-pink, #ec4899), var(--cosmos-purple, #a855f7), var(--cosmos-cyan, #22d3ee));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* === Scrollbar === */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.cosmic-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.cosmic-scrollbar::-webkit-scrollbar-track { background: rgba(20, 20, 30, 0.5); border-radius: 9999px; }
+.cosmic-scrollbar::-webkit-scrollbar-thumb { background: rgba(100, 100, 120, 0.4); border-radius: 9999px; }
+.cosmic-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(100, 100, 120, 0.6); }
+
+/* === Focus States === */
+*:focus-visible {
+  outline: 2px solid var(--cosmos-pink, #ec4899);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+/* === Selection === */
+::selection {
+  background: var(--cosmos-pink, #ec4899);
+  color: white;
+}
+
+/* === Button System === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.btn-primary {
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  color: white;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: rgba(30, 30, 40, 0.8);
+  color: #a1a1aa;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(40, 40, 50, 0.9);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #f4f4f5;
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.05);
+  color: #71717a;
+  border: 1px solid transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f4f4f5;
+}
+
+/* Variantes de tamaño */
+.btn-sm {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.72rem;
+}
+.btn-lg {
+  padding: 1.1rem 2.2rem;
+  font-size: 0.95rem;
+}
+.btn-icon {
+  padding: 0.6rem;
+  border-radius: 9999px;
+}
+.btn-icon.btn-sm {
+  padding: 0.4rem;
+}
+
+/* === Text Utilities === */
+.text-gradient-cosmic {
+  background: linear-gradient(135deg, #ec4899, #a855f7, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-glow-pink {
+  text-shadow: 0 0 10px rgba(236, 72, 153, 0.4), 0 0 20px rgba(236, 72, 153, 0.3);
+}
+
+/* === Hero Epic (for DJ booth) === */
+.hero-epic {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-epic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 90% at 50% 0%, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* === Divider === */
+.divider-gradient {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--cosmos-pink, #ec4899), transparent);
+  opacity: 0.3;
+}
+
+.divider-subtle {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* === Live Indicator === */
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(236, 72, 153, 0.15);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  font-size: 0.625rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #ec4899;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ec4899;
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+/* === Equalizer Bars === */
+.equalizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 24px;
+}
+
+.equalizer-bar {
+  width: 4px;
+  background: linear-gradient(to top, #ec4899, #a855f7);
+  border-radius: 2px;
+  animation: equalizer-1 0.8s ease-in-out infinite;
+}
+
+.equalizer-bar:nth-child(2) { animation: equalizer-2 0.7s ease-in-out infinite 0.1s; }
+.equalizer-bar:nth-child(3) { animation: equalizer-3 0.9s ease-in-out infinite 0.2s; }
+.equalizer-bar:nth-child(4) { animation: equalizer-1 0.6s ease-in-out infinite 0.3s; }
+.equalizer-bar:nth-child(5) { animation: equalizer-2 0.75s ease-in-out infinite 0.15s; }

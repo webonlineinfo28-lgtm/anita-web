@@ -1,31 +1,48 @@
-﻿import { useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Dices, X, Triangle, PartyPopper, Circle } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
 
-export default function DjWheel({ users, avatars, onPick, onClose }) {
+const SPIN_MS = 3400;
+const REVEAL_MS = 900;
+
+export default function DjWheel({ users = [], avatars = {}, onPick, onClose }) {
   const [deg, setDeg] = useState(0);
   const [winnerIdx, setWinnerIdx] = useState(null);
   const [spinning, setSpinning] = useState(false);
+  const timeoutsRef = useRef([]);
+
+  // Limpieza garantizada: si el modal se cierra a mitad de giro, ningún
+  // callback huérfano debe tocar estado desmontado ni disparar onPick.
+  useEffect(() => {
+    const pending = timeoutsRef.current;
+    return () => pending.forEach((t) => window.clearTimeout(t));
+  }, []);
 
   const n = users.length;
   const radius = 96;
+  const angle = (i) => (n > 0 ? (360 / n) * i - 90 : 0);
 
-  const angle = (i) => (360 / n) * i - 90;
+  const later = (fn, ms) => {
+    const t = window.setTimeout(fn, ms);
+    timeoutsRef.current.push(t);
+  };
 
   const spin = () => {
     if (spinning || n < 2) return;
     setSpinning(true);
     setWinnerIdx(null);
+    // El ganador se captura ANTES de los timeouts: nunca habrá onPick(undefined).
     const idx = Math.floor(Math.random() * n);
     const target = 5 * 360 + ((270 - angle(idx)) % 360);
     setDeg(target);
-    window.setTimeout(() => {
+    later(() => {
       setWinnerIdx(idx);
       setSpinning(false);
-      window.setTimeout(() => onPick(users[idx]), 900);
-    }, 3400);
+      const winner = users[idx];
+      if (winner) later(() => onPick?.(winner), REVEAL_MS);
+    }, SPIN_MS);
   };
 
   return (
@@ -34,7 +51,7 @@ export default function DjWheel({ users, avatars, onPick, onClose }) {
       <div className="relative w-full max-w-md rounded-[2rem] border border-pink-500/20 bg-zinc-900/90 glass-card hero-epic p-6 text-center shadow-2xl backdrop-blur-xl">
         <div className="mb-2 flex items-start justify-between">
           <h2 className="text-lg font-black uppercase tracking-tighter">
-            Sorteo <span className="text-amber-400">c�smico</span>
+            Sorteo <span className="text-amber-400">cósmico</span>
             <Circle size={20} className="ml-2 inline text-amber-400" />
           </h2>
           <button onClick={onClose} className="rounded-full p-2 text-zinc-500 transition-colors hover:bg-white/10 hover:text-white">

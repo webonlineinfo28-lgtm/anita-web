@@ -1,0 +1,152 @@
+/* Anita Festival 3.0 - Cosmos Premium Design Tokens */
+:root {
+  --cosmos-pink: #ec4899;
+  --cosmos-pink-glow: rgba(236, 72, 153, 0.4);
+  --cosmos-purple: #a855f7;
+  --cosmos-purple-glow: rgba(168, 85, 247, 0.4);
+  --cosmos-cyan: #22d3ee;
+  --cosmos-cyan-glow: rgba(34, 211, 238, 0.4);
+  --cosmos-amber: #fbbf24;
+  --void-primary: #0a0a10;
+  --void-surface: #1a1a28;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+  --font-xs: 0.625rem;
+  --font-sm: 0.75rem;
+  --font-base: 0.875rem;
+  --font-md: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+}
+/* ============================================================
+   ANITA FESTIVAL 3.0 - COSMOS PREMIUM DESIGN TOKENS
+   ============================================================ */
+
+:root {
+  /* === Primary Cosmic Colors === */
+  --cosmos-pink: #ec4899;
+  --cosmos-pink-glow: rgba(236, 72, 153, 0.4);
+  --cosmos-pink-subtle: rgba(236, 72, 153, 0.08);
+  --cosmos-purple: #a855f7;
+  --cosmos-purple-glow: rgba(168, 85, 247, 0.4);
+  --cosmos-purple-subtle: rgba(168, 85, 247, 0.08);
+  --cosmos-cyan: #22d3ee;
+  --cosmos-cyan-glow: rgba(34, 211, 238, 0.4);
+  --cosmos-cyan-subtle: rgba(34, 211, 238, 0.08);
+
+  /* === Accent Spectrum === */
+  --cosmos-amber: #fbbf24;
+  --cosmos-amber-glow: rgba(251, 191, 36, 0.4);
+  --cosmos-emerald: #34d399;
+  --cosmos-emerald-glow: rgba(52, 211, 153, 0.4);
+  --cosmos-rose: #fb7185;
+  --cosmos-violet: #8b5cf6;
+  --cosmos-blue: #3b82f6;
+  --cosmos-lime: #a3e635;
+
+  /* === Void Neutrals (Deep Space) === */
+  --void-deepest: #020204;
+  --void-deep: #050508;
+  --void-primary: #0a0a10;
+  --void-secondary: #0f0f18;
+  --void-tertiary: #14141f;
+  --void-elevated: #1a1a28;
+  --void-surface: #20202e;
+  --void-hover: #282838;
+
+  /* === Borders === */
+  --border-invisible: rgba(255, 255, 255, 0.02);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-default: rgba(255, 255, 255, 0.07);
+  --border-visible: rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(255, 255, 255, 0.18);
+  --border-focus: rgba(236, 72, 153, 0.5);
+  --border-glow: rgba(236, 72, 153, 0.25);
+
+  /* === Text Hierarchy === */
+  --text-primary: #f4f4f5;
+  --text-secondary: #d4d4d8;
+  --text-tertiary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-disabled: #52525b;
+  --text-inverse: #0a0a10;
+
+  /* === Glass Effects === */
+  --glass-bg: rgba(10, 10, 16, 0.6);
+  --glass-bg-heavy: rgba(10, 10, 16, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-border-hover: rgba(255, 255, 255, 0.12);
+  --glass-blur: 20px;
+  --glass-blur-heavy: 40px;
+  --glass-saturate: 180%;
+
+  /* === Shadows === */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.7);
+  --shadow-glow-pink: 0 0 20px var(--cosmos-pink-glow);
+  --shadow-glow-purple: 0 0 20px var(--cosmos-purple-glow);
+  --shadow-glow-cyan: 0 0 20px var(--cosmos-cyan-glow);
+  --shadow-glow-amber: 0 0 20px var(--cosmos-amber-glow);
+
+  /* === Border Radius === */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --radius-full: 9999px;
+
+  /* === Typography Scale === */
+  --font-xs: 0.625rem;
+  --font-sm: 0.75rem;
+  --font-base: 0.875rem;
+  --font-md: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 2rem;
+  --font-4xl: 2.5rem;
+  --font-5xl: 3rem;
+
+  /* === Spacing === */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* === Transitions === */
+  --transition-instant: 100ms ease;
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+  --transition-slower: 500ms ease;
+  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-bounce: 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* === Z-Index Scale === */
+  --z-base: 0;
+  --z-elevated: 10;
+  --z-sticky: 50;
+  --z-fixed: 100;
+  --z-modal-backdrop: 500;
+  --z-modal: 600;
+  --z-toast: 700;
+  --z-tooltip: 800;
+}

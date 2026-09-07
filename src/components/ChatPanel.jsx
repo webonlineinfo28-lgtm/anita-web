@@ -1,6 +1,7 @@
-﻿import { useState, useRef, useEffect, Fragment } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, MessageSquare, Heart, Star, Zap, PartyPopper, Sparkles } from "lucide-react";
+import { Send, MessageSquare, Heart, Star, Zap, PartyPopper, Sparkles, Smile } from "lucide-react";
+import Avatar from "./Avatar.jsx";
 
 const REACTIONS = [
   { emoji: "Heart", icon: Heart, color: "#ec4899", glow: "rgba(236,72,153,0.4)" },
@@ -10,272 +11,112 @@ const REACTIONS = [
   { emoji: "Sparkles", icon: Sparkles, color: "#34d399", glow: "rgba(52,211,153,0.4)" },
 ];
 
-export default function ChatPanel({ messages, onSend, onReact, disabled }) {
-  const [input, setInput] = useState("");
-  const [reactions, setReactions] = useState({});
-  const [showReactions, setShowReactions] = useState(false);
-  const [localReactions, setLocalReactions] = useState({});
-  const listRef = useRef(null);
-  const lastSongId = useRef(null);
-
-  useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollTop = listRef.current.scrollHeight;
-    }
-  }, [messages, localReactions]);
-
-  useEffect(() => {
-    setLocalReactions({});
-    lastSongId.current = null;
-  }, [messages.find((m) => m.type === "song_change")]);
-
-  const handleSend = () => {
-    if (!input.trim() || disabled) return;
-    onSend(input.trim());
-    setInput("");
-  };
-
-  const handleReaction = (idx) => {
-    const songIdx = messages.findLastIndex((m) => m.type === "song_change");
-    const key = `${songIdx}-${idx}`;
-    if (!localReactions[key]) {
-      const updated = { ...localReactions, [key]: true };
-      setLocalReactions(updated);
-      onReact(REACTIONS[idx].emoji);
-      setShowReactions(false);
-    }
-  };
-
-  const formatTime=(t)=>new Date(t).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
-  const showTimestamp=(m,i)=>{if(i===0)return true;const p=messages[i-1];return(m.time-p.time)>300000||p.type==="song_change";};
+function FloatingReaction({ icon: Icon, color }) {
   return (
-    <div
-      className="relative flex flex-col overflow-hidden rounded-3xl border border-pink-500/20 glass-card hero-epic"
-      style={{
-        height: "100%",
-        background: "linear-gradient(180deg, rgba(10,10,15,0.95) 0%, rgba(8,8,12,0.98) 100%)",
-        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03), 0 8px 32px rgba(0,0,0,0.4)",
-      }}
+    <motion.div
+      initial={{ opacity: 1, y: 0, scale: 1 }}
+      animate={{ opacity: 0, y: -60, scale: 1.5 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1, ease: "easeOut" }}
+      className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2"
     >
-      <div
-        className="absolute inset-x-0 top-0 h-20 pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, rgba(8,8,12,1) 0%, transparent 100%)", zIndex: 2 }}
-      />
+      <Icon size={20} style={{ color }} />
+    </motion.div>
+  );
+}
 
-      <div className="relative flex items-center gap-3 px-5 py-4 border-b border-white/[0.04]">
+function ChatMessage({ message, avatar, accent, isOwn, onReaction, userReacted }) {
+  const [showReactions, setShowReactions] = useState(false);
+  const [floatingEmojis, setFloatingEmojis] = useState([]);
+  const timeoutsRef = useRef(new Set());
+
+  // Limpieza de timeouts pendientes al desmontar (evita setState en componente muerto).
+  useEffect(() => {
+    const pending = timeoutsRef.current;
+    return () => pending.forEach(clearTimeout);
+  }, []);
+
+  const handleReaction = (reaction) => {
+    if (!userReacted) {
+      onReaction?.(reaction);
+      const id = Date.now() + Math.random();
+      setFloatingEmojis((prev) => [...prev, { id, icon: reaction.icon, color: reaction.color }]);
+      const t = setTimeout(() => {
+        timeoutsRef.current.delete(t);
+        setFloatingEmojis((prev) => prev.filter((e) => e.id !== id));
+      }, 1000);
+      timeoutsRef.current.add(t);
+    }
+    setShowReactions(false);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className={`group relative flex gap-3 ${isOwn ? "flex-row-reverse" : ""}`}
+    >
+      <div className="shrink-0">
+        <Avatar config={avatar} size={36} />
+      </div>
+
+      <div className={`relative max-w-[75%] ${isOwn ? "items-end" : "items-start"}`}>
+        <div className={`flex items-center gap-2 mb-1 ${isOwn ? "justify-end" : ""}`}>
+          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: accent || "#a1a1aa" }}>
+            {message.user}
+          </span>
+          <span className="text-[9px] text-zinc-600">
+            {formatMsgTime(message.time)}
+          </span>
+        </div>
+
         <div
-          className="flex h-10 w-10 items-center justify-center rounded-xl"
-          style={{
-            background: "linear-gradient(135deg, rgba(236,72,153,0.2) 0%, rgba(168,85,247,0.15) 100%)",
-            border: "1px solid rgba(236,72,153,0.2)",
-            boxShadow: "0 0 20px rgba(236,72,153,0.15)",
-          }}
+          className={`relative rounded-2xl px-4 py-2.5 ${
+            message.type === "system"
+              ? "bg-pink-500/10 border border-pink-500/20 text-pink-300"
+              : isOwn
+                ? "bg-gradient-to-br from-pink-600/30 to-purple-600/20 border border-pink-500/20"
+                : "bg-white/5 border border-white/10"
+          }`}
         >
-          <MessageSquare size={18} style={{ color: "#ec4899" }} />
-        </div>
-        <div>
-          <h3 className="text-[10px] font-black uppercase tracking-widest text-white">Chat</h3>
-          <p className="text-[8px] font-semibold text-zinc-500">Sala en vivo</p>
-        </div>
-        <div className="ml-auto">
-          <div className="flex items-center gap-1.5">
-            <div
-              className="h-1.5 w-1.5 rounded-full"
-              style={{
-                background: "#34d399",
-                boxShadow: "0 0 6px #34d399",
-                animation: "ping 2s cubic-bezier(0,0,0.2,1) infinite",
-              }}
-            />
-            <span className="text-[7px] font-bold uppercase tracking-widest text-emerald-400">Live</span>
-          </div>
-        </div>
-      </div>
+          <p className="text-sm leading-relaxed text-zinc-200">{message.text}</p>
 
-      <div
-        ref={listRef}
-        className="relative flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar"
-        style={{ scrollBehavior: "smooth" }}
-      >
-        {messages.map((msg, i) => {
-          const showTag = showTimestamp(msg, i);
-          let body = null;
-          if (msg.type === "system") {
-            body = (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-center gap-3 py-1"
-              >
-                <div className="h-px flex-1 opacity-20" style={{ background: "linear-gradient(to right, transparent, #ec4899)" }} />
-                <p className="text-[8px] font-bold uppercase tracking-widest text-pink-400/70 whitespace-nowrap">
-                  {msg.text}
-                </p>
-                <div className="h-px flex-1 opacity-20" style={{ background: "linear-gradient(to left, transparent, #ec4899)" }} />
-              </motion.div>
-            );
-          } else if (msg.type === "song_change") {
-            body = (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="relative flex flex-col items-center gap-2 py-4"
-              >
-                <div
-                  className="absolute inset-0 rounded-2xl"
-                  style={{
-                    background: "radial-gradient(ellipse at center, rgba(168,85,247,0.08) 0%, transparent 70%)",
-                  }}
-                />
-                <div
-                  className="flex items-center gap-2 px-4 py-2 rounded-full border"
-                  style={{
-                    background: "rgba(168,85,247,0.1)",
-                    borderColor: "rgba(168,85,247,0.2)",
-                  }}
-                >
-                  <div
-                    className="h-1.5 w-1.5 rounded-full"
-                    style={{ background: "#a855f7", boxShadow: "0 0 8px #a855f7" }}
-                  />
-                  <span className="text-[8px] font-bold uppercase tracking-widest text-purple-400">
-                    Nueva canción
-                  </span>
-                </div>
-                <p className="text-[10px] font-bold text-white text-center leading-snug px-4">
-                  {msg.text}
-                </p>
-              </motion.div>
-            );
-          } else if (msg.type === "reaction") {
-            const songIdx = messages.slice(0, i).filter((m) => m.type === "song_change").length;
-            const reactionKey = `${songIdx}-${REACTIONS.findIndex((r) => r.emoji === msg.emoji)}`;
-            const isNew = localReactions[reactionKey];
-            body = (
-              <motion.div
-                initial={isNew ? { scale: 0, opacity: 0 } : { opacity: 0.5, scale: 0.8 }}
-                animate={{ scale: 1, opacity: isNew ? 1 : 0.5 }}
-                exit={{ scale: 0, opacity: 0 }}
-                className="flex items-center justify-center"
-              >
-                <div
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border"
-                  style={{
-                    background: "rgba(255,255,255,0.03)",
-                    borderColor: "rgba(255,255,255,0.06)",
-                  }}
-                >
-                  <span className="text-[9px] font-semibold text-zinc-400">{msg.user}</span>
-                  <span className="text-zinc-600">reacciona</span>
-                  <span className="text-[10px]">con</span>
-                  <span className="text-[10px] font-bold" style={{ color: msg.color }}>
-                    {msg.emoji}
-                  </span>
-                </div>
-              </motion.div>
-            );
-          } else {
-            body = (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="group"
-              >
-                <div
-                  className="inline-flex flex-col rounded-2xl px-4 py-2.5"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
-                >
-                  <span className="text-[9px] font-bold text-pink-400/80 mb-0.5">{msg.user}</span>
-                  <span className="text-[10px] font-medium text-zinc-200 leading-relaxed">{msg.text}</span>
-                </div>
-              </motion.div>
-            );
-          }
-          return (
-            <Fragment key={msg.id || i}>
-              {showTag ? (
-                <div className="flex items-center gap-2 my-3 px-4">
-                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
-                  <span className="text-[7px] font-bold text-zinc-600 uppercase tracking-widest">{formatTime(msg.time)}</span>
-                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
-                </div>
-              ) : null}
-              {body}
-            </Fragment>
-          );
-        })}
-      </div>
-
-      <div className="relative px-4 py-3 border-t border-white/[0.04]">
-        <div className="absolute inset-x-0 bottom-full h-8 pointer-events-none" style={{ background: "linear-gradient(to top, rgba(8,8,12,1) 0%, transparent 100%)", zIndex: 2 }} />
-
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value.slice(0, 240))}
-              onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              disabled={disabled}
-              placeholder="Escribe un mensaje..."
-              className="w-full rounded-xl border border-white/[0.06] bg-black/40 px-4 py-2.5 pr-16 text-[10px] text-white placeholder-zinc-600 outline-none transition-all focus:border-pink-500/30 focus:bg-black/50"
-              style={{ fontSize: "10px" }}
-            />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-              <span className="text-[7px] text-zinc-600 font-mono">{input.length}/240</span>
-            </div>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleSend}
-            disabled={disabled || !input.trim()}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-            style={{
-              background: input.trim() ? "linear-gradient(135deg, #ec4899 0%, #c026d3 100%)" : "rgba(255,255,255,0.05)",
-              color: input.trim() ? "white" : "#71717a",
-              boxShadow: input.trim() ? "0 4px 12px rgba(236,72,153,0.4)" : "none",
-            }}
-          >
-            <Send size={14} />
-          </motion.button>
-        </div>
-
-        <div className="relative mt-2">
-          <div className="flex items-center justify-center">
+          {message.type !== "system" && (
             <button
               onClick={() => setShowReactions(!showReactions)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[8px] font-semibold text-zinc-500 border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.05] transition-all uppercase tracking-wider"
+              className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
             >
-              <Zap size={8} />
-              <span>Reaccionar</span>
+              <Smile size={12} className="text-zinc-400" />
             </button>
-          </div>
+          )}
+
+          <AnimatePresence>
+            {floatingEmojis.map((emoji) => (
+              <FloatingReaction key={emoji.id} icon={emoji.icon} color={emoji.color} />
+            ))}
+          </AnimatePresence>
 
           <AnimatePresence>
             {showReactions && (
               <motion.div
-                initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 flex gap-1.5"
+                initial={{ opacity: 0, scale: 0.9, y: 5 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 5 }}
+                className="absolute bottom-full left-0 mb-2 flex gap-1 p-1.5 rounded-xl bg-zinc-900/95 border border-white/10 shadow-xl backdrop-blur-sm"
               >
                 {REACTIONS.map((r, i) => {
-                  const Icon = r.icon;
+                  const RIcon = r.icon;
                   return (
                     <motion.button
                       key={i}
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.85 }}
-                      onClick={() => handleReaction(i)}
-                      className="flex h-9 w-9 items-center justify-center rounded-xl border transition-all"
-                      style={{
-                        background: `${r.color}15`,
-                        borderColor: `${r.color}40`,
-                        boxShadow: `0 0 12px ${r.glow}`,
-                      }}
+                      whileHover={{ scale: 1.3 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handleReaction(r)}
+                      className="h-8 w-8 rounded-lg flex items-center justify-center transition-colors"
+                      style={{ background: `${r.color}15`, border: `1px solid ${r.color}30` }}
                     >
-                      <Icon size={14} style={{ color: r.color }} />
+                      <RIcon size={14} style={{ color: r.color }} />
                     </motion.button>
                   );
                 })}
@@ -283,13 +124,150 @@ export default function ChatPanel({ messages, onSend, onReact, disabled }) {
             )}
           </AnimatePresence>
         </div>
+
+        {message.reactions && message.reactions.length > 0 && (
+          <div className={`flex gap-1 mt-1 ${isOwn ? "justify-end" : ""}`}>
+            {message.reactions.map((r, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold"
+                style={{ background: `${r.color}15`, color: r.color, border: `1px solid ${r.color}30` }}
+              >
+                <r.icon size={10} /> {r.count}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+// Hora de mensaje blindada: si el timestamp no es válido, no muestra nada raro.
+function formatMsgTime(t) {
+  const d = new Date(t);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+}
+
+export default function ChatPanel({ messages, avatars, onSend, onReact, trackReactions, disabled, sessionUser }) {
+  const [input, setInput] = useState("");
+  const [localReactions, setLocalReactions] = useState({});
+  const listRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    setLocalReactions({});
+  }, [messages?.find((m) => m?.type === "song_change")?.time]);
+
+  const handleSend = () => {
+    const text = input.trim();
+    if (!text || disabled) return;
+    onSend?.(text);
+    setInput("");
+    inputRef.current?.focus();
+  };
+
+  const handleReaction = (messageIdx, reaction) => {
+    const key = `${messageIdx}-${reaction?.emoji ?? ""}`;
+    if (!localReactions[key]) {
+      setLocalReactions((prev) => ({ ...prev, [key]: true }));
+      onReact?.(reaction?.emoji);
+    }
+  };
+
+  const showTimestamp = (m, i) => {
+    if (i === 0) return true;
+    const prev = messages[i - 1];
+    if (typeof m?.time !== "number" || typeof prev?.time !== "number") return false;
+    return m.time - prev.time > 300000 || prev.type === "song_change";
+  };
+
+  return (
+    <div className="glass-panel flex flex-col h-full overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500/20 to-purple-500/10 border border-pink-500/20">
+          <MessageSquare size={18} className="text-pink-400" />
+        </div>
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-white">Chat</h3>
+          <p className="text-[10px] text-zinc-500">Sala en vivo</p>
+        </div>
+        <div className="ml-auto flex items-center gap-1.5">
+          <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[10px] font-bold text-emerald-400">Live</span>
+        </div>
       </div>
 
-      <style>{`
-        @keyframes ping {
-          75%, 100% { transform: scale(2); opacity: 0; }
-        }
-      `}</style>
+      {/* Messages */}
+      <div ref={listRef} className="flex-1 overflow-y-auto p-4 space-y-4 cosmic-scrollbar">
+        {!messages || messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-zinc-600">
+            <MessageSquare size={32} className="mb-2 opacity-30" />
+            <p className="text-xs font-semibold">No hay mensajes aún</p>
+            <p className="text-[10px] text-zinc-700">¡Sé el primero en hablar!</p>
+          </div>
+        ) : (
+          (messages || []).map((message, i) => (
+            <div key={message?.id || i}>
+              {showTimestamp(message, i) && (
+                <div className="flex items-center justify-center">
+                  <span className="text-[9px] font-bold text-zinc-600 px-2 py-0.5 rounded-full bg-white/5">
+                    {formatMsgTime(message?.time)}
+                  </span>
+                </div>
+              )}
+              <ChatMessage
+                message={message || {}}
+                avatar={avatars?.[message?.user]}
+                accent={message?.accent}
+                isOwn={message?.user === sessionUser}
+                onReaction={(r) => handleReaction(i, r)}
+                userReacted={Object.keys(localReactions).some((k) => k.startsWith(`${i}-`))}
+              />
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Input */}
+      <div className="p-4 border-t border-white/5">
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <input
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value.slice(0, 240))}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              disabled={disabled}
+              placeholder="Escribe un mensaje..."
+              className="glass-input w-full px-4 py-3 pr-12 text-sm"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-zinc-600 font-mono">
+              {input.length}/240
+            </span>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleSend}
+            disabled={disabled || !input.trim()}
+            className="btn btn-primary px-4"
+          >
+            <Send size={16} />
+          </motion.button>
+        </div>
+      </div>
     </div>
   );
 }
+
+
+

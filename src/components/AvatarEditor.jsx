@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Dices, RotateCcw, X } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
@@ -71,10 +71,26 @@ export default function AvatarEditor({ config, onSave, onClose }) {
 
   const set = (key, value) => setDraft((d) => ({ ...d, [key]: value }));
 
+  // Robustez: si una paleta no cargó, Object.entries(undefined) petaría.
   const sortedKeys = (obj) =>
-    Object.entries(obj)
+    Object.entries(obj || {})
       .map(([k, v]) => ({ k, v }))
+      .filter((e) => typeof e.v === "string")
       .sort((a, b) => a.v.localeCompare(b.v));
+
+  // Cerrar con Escape + bloquear scroll del fondo mientras el modal está abierto.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose?.();
+    };
+    window.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
 
   const renderTab = () => {
     switch (tab) {
@@ -191,9 +207,9 @@ export default function AvatarEditor({ config, onSave, onClose }) {
         <div className="mb-4 flex items-start justify-between">
           <div>
             <h2 className="text-lg font-black uppercase tracking-tighter">
-              DiseÃ±a tu <span className="text-pink-500">avatar cÃ³smico</span>
+              Diseña tu <span className="text-pink-500">avatar cósmico</span>
             </h2>
-            <p className="text-[10px] text-zinc-500">La fiesta te mirarÃ¡ asÃ­</p>
+            <p className="text-[10px] text-zinc-500">La fiesta te mirará así</p>
           </div>
           <button onClick={onClose} className="rounded-full p-2 text-zinc-500 transition-colors hover:bg-white/10 hover:text-white">
             <X size={16} />
@@ -239,11 +255,11 @@ export default function AvatarEditor({ config, onSave, onClose }) {
             </button>
           </div>
           <div className="flex gap-2">
-            <button onClick={onClose} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-zinc-400 transition-all hover:bg-white/10">
+            <button onClick={() => onClose?.()} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-zinc-400 transition-all hover:bg-white/10">
               Cancelar
             </button>
             <button
-              onClick={() => onSave(normalizeAvatar(draft))}
+              onClick={() => onSave?.(normalizeAvatar(draft))}
               className="rounded-full bg-gradient-to-r from-pink-600 to-purple-600 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white shadow-lg shadow-pink-600/20 transition-all hover:from-pink-500 hover:to-purple-500"
             >
               Guardar

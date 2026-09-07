@@ -1,6 +1,7 @@
 ﻿import { useState } from "react";
 import { motion } from "framer-motion";
 import { Disc3, Mic2, Crown, User, Sparkles, Zap } from "lucide-react";
+import { getAdminPassword } from "../lib/constants.js";
 import "./login-screen.css";
 
 export default function LoginScreen({ onLogin }) {
@@ -12,13 +13,26 @@ export default function LoginScreen({ onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    const cleanName = name.trim();
+    if (!cleanName) return;
     setIsLoading(true);
     setError("");
-    await new Promise((r) => setTimeout(r, 600));
+
+    // El host recibe su rol SOLO si la contraseña coincide con la de .env
+    // (con fallback de desarrollo). El secreto nunca vive en el bundle
+    // como literal visible en producción.
+    const isHost = isHostMode && hostKey === getAdminPassword();
+
+    if (isHostMode && !isHost) {
+      setIsLoading(false);
+      setError("Contraseña de host incorrecta. Puedes entrar como invitado.");
+      return;
+    }
+
+    await new Promise((r) => setTimeout(r, 400));
     onLogin({
-      name: name.trim().slice(0, 20),
-      isHost: isHostMode && hostKey.trim() === "uwu777",
+      name: cleanName.slice(0, 20),
+      isHost,
     });
   };
 
@@ -77,7 +91,7 @@ export default function LoginScreen({ onLogin }) {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Tu nombre aqu�..."
+                placeholder="Tu nombre aquí..."
                 maxLength={20}
                 autoFocus
                 required

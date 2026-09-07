@@ -1,9 +1,8 @@
-﻿import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Crown,
   Disc3,
   ListMusic,
-  Radio,
   Shuffle,
   UserMinus,
   UserPlus,
@@ -14,7 +13,6 @@ import {
 import Avatar from "./Avatar.jsx";
 import { AVATAR_PALETTES } from "../lib/avatars.js";
 
-// Burbujas flotantes para las reacciones.
 function Bursts({ bursts }) {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -40,7 +38,26 @@ function Bursts({ bursts }) {
   );
 }
 
-// Cabina del DJ: quien esta pinchando, la canción en el aire y la lista de espera.
+function Equalizer({ active }) {
+  if (!active) return null;
+  // Alturas deterministas: la animación vive en CSS (equalizer-bar),
+  // así las barras no cambian de tamaño en cada re-render del padre.
+  const HEIGHTS = [38, 62, 45, 70, 30];
+  return (
+    <div className="equalizer">
+      {HEIGHTS.map((h, i) => (
+        <div key={i} className="equalizer-bar" style={{ height: `${h}%`, animationDelay: `${i * 0.12}s` }} />
+      ))}
+    </div>
+  );
+}
+
+// Formatea segundos a m:ss para la barra de progreso.
+function fmt(s) {
+  const t = Math.max(0, Math.floor(Number(s) || 0));
+  return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+}
+
 export default function DjBoothCard({
   currentDj,
   djAvatar,
@@ -60,147 +77,184 @@ export default function DjBoothCard({
   onOpenWheel,
   reactionsTotal = 0,
 }) {
-  const accent = AVATAR_PALETTES.accent[djAvatar?.accent] || "#ec4899";
+  // Guard doble: paleta indefinida o acento desconocido nunca deben romper la cabina.
+  const accent = AVATAR_PALETTES.accent?.[djAvatar?.accent] || "#ec4899";
   const isHostPlayer = isAdmin && currentDj === sessionUser;
+  const hasDj = !!currentDj;
+  // Progreso siempre acotado a [0,1] para que la barra no desborde.
+  const safeProgress = Math.min(1, Math.max(0, Number(progress) || 0));
 
   return (
-    <div className="glass-card relative overflow-hidden rounded-2xl p-4 border border-pink-500/20 hero-epic">
+    <div className="glass-card relative overflow-hidden p-6 border border-pink-500/20">
       <div
-        className="pointer-events-none absolute inset-0 opacity-20"
+        className="pointer-events-none absolute inset-0 opacity-30"
         style={{
           background: `radial-gradient(60% 90% at 50% 0%, ${accent}55, transparent 70%)`,
         }}
       />
 
-      <div className="relative z-10 flex items-center gap-5">
-        <div className="relative shrink-0">
-          <Avatar config={djAvatar} size={88} live />
+      <div className="relative z-10 flex items-center justify-between mb-4">
+        <div className="live-indicator">
+          <div className="live-dot" />
+          <span>En Directo</span>
+        </div>
+        <Equalizer active={hasDj} />
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center text-center mb-6">
+        <div className="relative mb-4">
+          <motion.div
+            animate={hasDj ? { scale: [1, 1.02, 1] } : {}}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Avatar config={djAvatar} size={120} live={hasDj} />
+          </motion.div>
           <span
-            className="absolute -inset-1.5 rounded-full border-2"
+            className="absolute -inset-2 rounded-full border-2 animate-pulse-glow"
             style={{ borderColor: `${accent}66` }}
           />
           {isAdmin && (
-            <span className="absolute -right-2 -top-2 z-10 rounded-full border border-yellow-400/40 bg-yellow-500/20 p-1">
-              <Crown size={12} className="text-yellow-400" />
+            <span className="absolute -right-2 -top-2 z-10 rounded-full border border-yellow-400/40 bg-yellow-500/20 p-1.5">
+              <Crown size={14} className="text-yellow-400" />
             </span>
           )}
         </div>
 
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1.5 rounded-full border border-pink-500/30 bg-pink-500/15 px-2 py-0.5 text-[7px] font-black uppercase tracking-widest text-pink-400">
-              <Radio size={8} className="animate-pulse" /> En directo
-            </span>
-            <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">
-              {djTitle}
-            </span>
-          </div>
+        <motion.h2
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-2xl font-black uppercase tracking-tight"
+          style={{ textShadow: `0 0 20px ${accent}66`, color: accent }}
+        >
+          {currentDj || "DJ Vacío"}
+        </motion.h2>
 
-          <h2 className="mt-1 truncate text-2xl font-black uppercase tracking-tighter">
-            {currentDj || "DJ Vacío"}
-          </h2>
+        <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 mt-1">
+          {djTitle}
+        </p>
 
-          <div className="mt-2 flex items-center gap-2 text-zinc-300">
-            {track ? (
-              <>
-                <Disc3
-                  size={14}
-                  className="shrink-0 animate-spin-slow text-pink-400"
-                />
-                <p className="truncate text-[11px] font-bold">
-                  {track.title}
-                </p>
-              </>
-            ) : (
-              <p className="text-[10px] italic text-zinc-600">
-                Sin canción asignada
-              </p>
-            )}
-          </div>
-
-          {track && (
-            <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-pink-500 to-purple-500"
-                style={{ width: `${Math.min(100, (played * 100) || progress)}%` }}
-              />
+        {track ? (
+          <div className="mt-4 w-full max-w-xs">
+            <div className="flex items-center gap-2 justify-center text-zinc-300">
+              <Disc3 size={16} className="animate-spin-slow" style={{ color: accent }} />
+              <p className="text-sm font-semibold truncate">{track.title}</p>
             </div>
-          )}
-        </div>
+            <div className="mt-3 relative">
+              <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{
+                    background: `linear-gradient(90deg, ${accent}, ${accent}cc)`,
+                    boxShadow: `0 0 10px ${accent}88`,
+                  }}
+                  animate={{ width: `${safeProgress * 100}%` }}
+                  transition={{ duration: 0.5 }}
+                />
+              </div>
+              <div className="flex justify-between mt-1 text-[10px] font-mono text-zinc-500">
+                <span>{fmt(played)}</span>
+                <span>{fmt(track.duration)}</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 flex flex-col items-center gap-2 text-zinc-500">
+            <Disc3 size={24} className="opacity-30" />
+            <p className="text-xs font-semibold">Sin canción asignada</p>
+          </div>
+        )}
       </div>
 
-      <div className="relative z-10 mt-4 flex flex-wrap items-center gap-2">
+      <div className="divider-gradient mb-4" />
+
+      <div className="relative z-10 flex flex-wrap gap-2 justify-center">
         {inWaitlist ? (
-          <button
-            onClick={onLeave}
-            className="flex items-center gap-1.5 rounded-full border border-pink-500/30 bg-pink-500/10 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-pink-400 transition-all hover:bg-pink-500/20"
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => onLeave?.()}
+            className="btn btn-secondary"
           >
-            <UserMinus size={12} /> Salir
-          </button>
+            <UserMinus size={14} /> Salir de la cola
+          </motion.button>
         ) : (
-          <button
-            onClick={onJoin}
-            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-pink-600 to-purple-600 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-white shadow-lg shadow-pink-600/20 transition-all hover:from-pink-500 hover:to-purple-500"
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => onJoin?.()}
+            className="btn btn-primary"
           >
-            <UserPlus size={12} /> Subir a la cabina
-          </button>
+            <UserPlus size={14} /> Subir a la cabina
+          </motion.button>
         )}
         {isAdmin && (
-          <button
-            onClick={onOpenWheel}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => onOpenWheel?.()}
             disabled={waitlist.length < 2}
-            className="flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-amber-300 transition-all hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-40"
-            title="Sorteo c�smico para elegir al pr�ximo DJ"
+            className="btn"
+            style={{
+              background: "rgba(251, 191, 36, 0.1)",
+              border: "1px solid rgba(251, 191, 36, 0.3)",
+              color: "#fbbf24",
+            }}
           >
-            <Shuffle size={12} /> Sorteo
-          </button>
+            <Shuffle size={14} /> Sorteo
+          </motion.button>
         )}
       </div>
 
-      <Bursts bursts={bursts} />
+      {reactionsTotal > 0 && (
+        <div className="relative z-10 mt-4 flex justify-center">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+            <span className="text-xs font-bold text-pink-400">{reactionsTotal}</span>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+              reaccion{reactionsTotal !== 1 ? "es" : ""}
+            </span>
+          </div>
+        </div>
+      )}
 
       {waitlist.length > 0 && (
-        <div className="relative z-10 mt-4 border-t border-white/5 pt-3">
-          <div className="mb-2 flex items-center justify-between px-1">
-            <span className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-zinc-500">
-              <ListMusic size={10} /> Cabina - lista de espera ({waitlist.length})
+        <div className="relative z-10 mt-6 pt-4 border-t border-white/5">
+          <div className="flex items-center justify-between mb-3">
+            <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
+              <ListMusic size={12} /> Cabina - lista de espera ({waitlist.length})
             </span>
-            {reactionsTotal > 0 && (
-              <span className="text-[8px] font-black uppercase tracking-widest text-pink-400">
-                {reactionsTotal} reaccion{reactionsTotal !== 1 ? "es" : ""}
-              </span>
-            )}
           </div>
           <div className="flex flex-wrap gap-2">
             {waitlist.map((user, i) => {
               const mine = user === sessionUser;
               return (
-                <div
+                <motion.div
                   key={user}
-                  className={`flex items-center gap-1.5 rounded-full border px-2 py-1 ${
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className={`flex items-center gap-2 rounded-full border px-3 py-1.5 ${
                     mine
                       ? "border-pink-500/40 bg-pink-500/10"
                       : "border-white/5 bg-white/5"
                   }`}
                 >
-                  <span className="text-[8px] font-black text-zinc-600">#{i + 1}</span>
-                  <Avatar config={avatars[user]} size={22} />
-                  <span className="max-w-[80px] truncate text-[8px] font-black uppercase tracking-wider text-zinc-300">
+                  <span className="text-xs font-black text-zinc-600">#{i + 1}</span>
+                  <Avatar config={avatars[user]} size={24} />
+                  <span className="max-w-[100px] truncate text-xs font-bold uppercase tracking-wider text-zinc-300">
                     {user}
                   </span>
                   {mine && (
-                    <span className="text-[7px] font-black uppercase text-pink-400">tu</span>
+                    <span className="text-[10px] font-black uppercase text-pink-400">tu</span>
                   )}
                   {isAdmin && i > 0 && (
                     <button
-                      onClick={() => onEject(user)}
+                      onClick={() => onEject?.(user)}
                       title="Sacar de la cola"
-                      className="ml-0.5 rounded-full p-0.5 text-zinc-600 transition-colors hover:text-red-400"
+                      className="ml-1 rounded-full p-1 text-zinc-600 transition-colors hover:text-red-400 hover:bg-red-500/10"
                     >
-                      <X size={10} />
+                      <X size={12} />
                     </button>
                   )}
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -208,11 +262,15 @@ export default function DjBoothCard({
       )}
 
       {isHostPlayer && (
-        <p className="relative z-10 mt-3 flex items-center justify-center gap-1.5 text-center text-[7px] font-bold uppercase tracking-widest text-zinc-600">
-          <Sliders size={10} />
-          <span>Estas pinchando en directo, disfruta el set</span>
-        </p>
+        <div className="relative z-10 mt-4 flex items-center justify-center gap-2 text-center">
+          <Sliders size={12} className="text-zinc-600" />
+          <span className="text-xs font-bold uppercase tracking-widest text-zinc-600">
+            Estás pinchando en directo, disfruta el set
+          </span>
+        </div>
       )}
+
+      <Bursts bursts={bursts} />
     </div>
   );
 }
