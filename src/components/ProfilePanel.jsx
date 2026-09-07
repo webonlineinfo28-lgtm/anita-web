@@ -2,8 +2,10 @@ import { motion } from "framer-motion";
 import { BadgeCheck, Crown, X, Target, Ruler, Disc3, Heart, Sparkles } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
+import StatIcon from "./StatIcon.jsx";
 import { BADGES } from "../lib/stats.js";
 import { levelProgress } from "../lib/stats.js";
+
 
 const STAT_ICONS = [
   { label: "Bingos", key: "bingos", Icon: Target, color: "#ec4899" },
@@ -54,8 +56,8 @@ export default function ProfilePanel({ user, isAdmin, avatar, stats, onClose }) 
                 {user}
               </h3>
             </div>
-            <p className="text-xs font-bold uppercase tracking-widest text-pink-400">
-              {prog.icon} {prog.title}
+                        <p className="text-xs font-bold uppercase tracking-widest text-pink-400">
+              <StatIcon name={prog.icon} size={13} className="inline" /> {prog.title}
             </p>
             <div className="mt-2">
               <div className="mb-1 flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-500">
@@ -107,7 +109,7 @@ export default function ProfilePanel({ user, isAdmin, avatar, stats, onClose }) 
                   className="flex flex-col items-center rounded-xl border px-2 py-3 text-center cursor-default"
                   style={{ borderColor: `${b.color || "#ec4899"}40`, background: `${b.color || "#ec4899"}10` }}
                 >
-                  <span className="text-xl">{b.icon}</span>
+                                     <StatIcon name={b.icon} size={22} style={{ color: b.color || "#ec4899" }} />
                   <span className="mt-1 text-[9px] font-black uppercase tracking-wider" style={{ color: b.color || "#ec4899" }}>
                     {b.name}
                   </span>

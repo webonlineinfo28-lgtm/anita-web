@@ -2,6 +2,7 @@ import { Crown, Medal, Star, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 
 import Avatar from "./Avatar.jsx";
+import StatIcon from "./StatIcon.jsx";
 import { levelFromXp } from "../lib/stats.js";
 
 const PODIUM_COLORS = [
@@ -76,7 +77,7 @@ export default function RankingPanel({ permanentCounts, winners, avatars = {} })
                       {entry.user}
                     </span>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">
-                      {lvl.icon} {lvl.title}
+                                          <StatIcon name={lvl.icon} size={12} className="inline" /> {lvl.title}
                     </span>
                   </div>
                 </div>

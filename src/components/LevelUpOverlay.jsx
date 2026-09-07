@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Sparkles, Star } from "lucide-react";
+import { PartyPopper, Sparkles, Star } from "lucide-react";
 import { useEffect, useRef } from "react";
 import Avatar from "./Avatar.jsx";
 
@@ -121,7 +121,7 @@ export default function LevelUpOverlay({ level, title, avatar, user, onClose }) 
           onClick={onClose}
           className="btn btn-primary btn-lg mt-2"
         >
-          ¡Seguir la fiesta! 🎉
+                    ¡Seguir la fiesta! <PartyPopper size={16} className="ml-1.5" />
         </motion.button>
       </motion.div>
     </motion.div>

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Crown, Play, Pause, RotateCcw, Sparkles, Star, CircleDot, Grid3X3 } from 'lucide-react';
+import { Crown, Play, Pause, RotateCcw, Sparkles, Star, CircleDot, Grid3X3, Dice1 } from 'lucide-react';
 import { isCellInWinningLine } from '../lib/bingo-core.js';
 
 const LETTERS = ['B', 'I', 'N', 'G', 'O'];
@@ -125,7 +125,7 @@ function CardView({ bingo }) {
                     : 'bg-white/5 text-zinc-300 hover:bg-white/10'
               }`}
             >
-              <span className="text-xs">{cell.isCenter ? '★' : cell.number}</span>
+              <span className="text-xs">{cell.isCenter ? <Star size={10} className="text-zinc-500"/> : cell.number}</span>
               {inWin && (
                 <motion.div
                   initial={{ scale: 0 }}
@@ -224,7 +224,13 @@ function BomboView({ bingo, isAdmin }) {
         </div>
       ) : (
         <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">
-          {isBomboRunning ? "🎲 El bombo está girando…" : "Esperando al host…"}
+                              {isBomboRunning ? (
+            <span className="flex items-center gap-1">
+              <Dice1 size={12} /> El bombo está girando…
+            </span>
+          ) : (
+            "Esperando al host…"
+          )}
         </p>
       )}
     </div>

@@ -127,7 +127,7 @@ function AppAuthenticated({ session, onLogout }) {
     try {
       await room.addSong(inputUrl.trim());
       setInputUrl("");
-      pushToast("success", "🎵 Canción añadida a la cola");
+      pushToast("success", "Canción añadida a la cola");
     } catch (e) {
       const msg = e.message || "Error al agregar canción";
       setAddError(msg);
