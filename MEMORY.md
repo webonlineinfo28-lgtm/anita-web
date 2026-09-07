@@ -144,3 +144,61 @@ Admin pausa en 2:30 → broadcast {isPlaying:false, played:0.375, playedSeconds:
 | 2026-09-06 | Límite Vercel `api-deployments-free-per-day` → deploy.yml deshabilitado temporalmente; env vars vía API (sin gastar deploys). |
 | 2026-09-06 | Deploy manual disponible: `npm run build && npx vercel --prod` (tras el reset del cupo). |
 | 2026-09-06 | **Sincronización de video profesional**: implementado sync de posición de video entre admin y usuarios con throttling, seek sync, y fallback a progreso local. |
+| 2026-09-07 | **Cosmos Ultimate (commit `e1d123b`)**: rediseño visual completo + hardening de seguridad. Ver sección 10. |
+
+## 10. 🌌 Cosmos Ultimate — Rediseño visual + robustez (2026-09-07)
+
+### Sistema de diseño "Cosmos Premium"
+- `src/styles/tokens.css` — design tokens: paleta cósmica (pink #ec4899, purple #a855f7, cyan #22d3ee), void neutrals, tipografía, espaciado, sombras glow, z-index.
+- `src/styles/animations.css` — 20+ keyframes (pulse-glow, float, twinkle, shimmer, equalizer-1/2/3, gradient-shift, meteor, jelly…).
+- `src/styles/components.css` — glass-card / glass-card-heavy / glass-panel / glass-input, botones (.btn + variantes primary/secondary/ghost/sm/lg/icon), scrollbar cósmico, text-gradients, live-indicator, equalizer.
+- `src/index.css` importa los 3 módulos con `@import`.
+
+### Layout principal (App.jsx)
+```
+Header (compacto, glass)
+─────────────────────────────
+DJ BOOTH HERO (max-w-5xl centrado)
+─────────────────────────────
+GRID SOCIAL: Bingo | Chat (lg:col-span-2 / xl:1col) | Ranking
+─────────────────────────────
+PlayerPanel (dock)
+─────────────────────────────
+NowPlaying (barra fija bottom, solo con música)
++ Toasts (top) + LevelUpOverlay (modal)
+```
+- `main` usa `pb-36` para no quedar tapado por la NowPlaying bar.
+- App.jsx solo importa lo que usa (limpieza de imports muertos del monolito antiguo).
+
+### Componentes NUEVOS
+| Archivo | Qué hace |
+| ------- | -------- |
+| `NowPlaying.jsx` | Barra fija inferior: disco girando, mini avatar DJ, título legible (parsea URL), progreso, like ❤, controles play/skip solo host. Visible solo si `track` existe. |
+| `Toast.jsx` | `makeToast(type, msg)` + `ToastContainer`. Tipos: success/info/warning/level-up. Auto-dismiss 3.5s, máx 3 en stack. |
+| `LevelUpOverlay.jsx` | Modal épico al subir de nivel. Detección en App.jsx con `useRef(prevLevel)` comparando `levelProgress(stats.xp)` de `lib/stats.js`. |
+| `ErrorBoundary.jsx` | Envuelto en `main.jsx` alrededor de `<App/>` — evita pantalla blanca ante errores de render. |
+
+### Rediseños de componentes existentes
+- **BingoPanel**: UNA tarjeta con tabs [Bombo | Cartón]. `BomboView` = bola animada (spring), progress n/75, `LastNumbers` (grid por letra). ⚠️ `drawnNumbers[0]` es la bola MÁS RECIENTE → usar `slice(0, N)`, NO `slice(-N)`. Controles solo host (`isAdmin`).
+- **ChatPanel**: burbujas propias/otros/sistema, popup de 5 reacciones, live indicator, autoscroll.
+- **PlayerPanel (dock)**: mini-video (ReactPlayer lazy en `<Suspense>`), seek por click y flechas (`role="slider"`), carrusel de `TrackCard`s con hue determinista por URL (`trackHue`), toggle Cola/Historial con **estado interno del panel** (bug fix: antes venía de la sala).
+- **RankingPanel**: medallas oro/plata/bronce, entrada escalonada.
+- **ProfilePanel**: barra de nivel animada, grid de stats.
+- **DjBoothCard**: avatar 120px con aura, "EN DIRECTO", equalizer determinista.
+- **CosmicBackground**: 100+ estrellas con parallax, nebulosas según acento del DJ, respeta `prefers-reduced-motion`, rAF con cleanup.
+
+### ⚠️ Hardening de seguridad y robustez (IMPORTANTE — no revertir)
+1. **RankingPanel**: eliminado `dangerouslySetInnerHTML={{ __html: avatars[user] }}` — `room.avatars[user]` es un OBJETO config, no HTML (renderizaba `[object Object]` y era vector XSS). Ahora usa `<Avatar/>`.
+2. **LoginScreen**: password hardcodeada en el bundle → usa `getAdminPassword()` de `lib/constants.js` (lee `VITE_ADMIN_PASSWORD`). Error visible si falla.
+3. **DjWheel**: timeouts en `useRef` + cleanup al desmontar (cerrar a mitad de giro ya no dispara `onPick` en componente muerto). Ganador capturado ANTES del timeout. Guards: lista vacía, `n>0`, `if (winner)`.
+4. **DjBoothCard**: guard `AVATAR_PALETTES.accent?.[...]`, `safeProgress` acotado [0,1], equalizer con CSS delays (no `Math.random()` en render), handlers opcionales `onJoin?.()`.
+5. **Timestamps**: validar con `new Date(ts)` + guard `isNaN` antes de formatear.
+
+### Convenciones del repo descubiertas
+- **Husky commit-msg**: exige formato `tipo(alcance): descripcion`. Tipos: feat, fix, docs, style, refactor, perf, test, chore, ui, hotfix. Sin formato = commit RECHAZADO.
+- Último commit: `e1d123b ui(sala): Cosmos Ultimate - ...` (22 files, +2293/-1876).
+- ⚠️ Pendiente: `git push` a origin/master (el commit está solo local).
+
+### Validación final (2026-09-07)
+- Build ✅ | 27/27 tests ✅ | Navegador en vivo: 0 errores de consola ✅
+- Probado en Playwright: login, sala completa, AvatarEditor (tabs + Aleatorio + cierre con Escape), BomboView con bola 7 y 3/75 bolas.
