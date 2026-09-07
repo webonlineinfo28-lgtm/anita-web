@@ -196,8 +196,7 @@ NowPlaying (barra fija bottom, solo con música)
 
 ### Convenciones del repo descubiertas
 - **Husky commit-msg**: exige formato `tipo(alcance): descripcion`. Tipos: feat, fix, docs, style, refactor, perf, test, chore, ui, hotfix. Sin formato = commit RECHAZADO.
-- Último commit: `e1d123b ui(sala): Cosmos Ultimate - ...` (22 files, +2293/-1876).
-- ⚠️ Pendiente: `git push` a origin/master (el commit está solo local).
+- Último commit: `b273e5d docs(memoria): ...` — **pulado a origin/master** (2026-09-07, `e1d123b` + `b273e5d` ya en remoto).
 
 ### Validación final (2026-09-07)
 - Build ✅ | 27/27 tests ✅ | Navegador en vivo: 0 errores de consola ✅
