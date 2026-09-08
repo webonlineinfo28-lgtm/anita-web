@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { PartyPopper, Sparkles, Star } from "lucide-react";
 import { useEffect, useRef } from "react";
 import Avatar from "./Avatar.jsx";
+import { COLORS, colorWithAlpha } from "../lib/colors.js";
 
 // Fanfarria corta con WebAudio (sin ficheros de audio).
 function playFanfare() {
@@ -33,8 +34,8 @@ function launchConfetti() {
     .then((mod) => {
       const confetti = mod.default;
       const opts = { spread: 100, ticks: 220, gravity: 0.9, zIndex: 100 };
-      confetti({ ...opts, particleCount: 90, origin: { x: 0.2, y: 0.6 }, colors: ["#ec4899", "#a855f7", "#fbbf24"] });
-      confetti({ ...opts, particleCount: 90, origin: { x: 0.8, y: 0.6 }, colors: ["#22d3ee", "#a855f7", "#fbbf24"] });
+      confetti({ ...opts, particleCount: 90, origin: { x: 0.2, y: 0.6 }, colors: [COLORS.pink, COLORS.purple, COLORS.amber] });
+      confetti({ ...opts, particleCount: 90, origin: { x: 0.8, y: 0.6 }, colors: [COLORS.cyan, COLORS.purple, COLORS.amber] });
       setTimeout(() => confetti({ ...opts, particleCount: 130, origin: { x: 0.5, y: 0.4 } }), 250);
     })
     .catch(() => {});
@@ -66,7 +67,7 @@ export default function LevelUpOverlay({ level, title, avatar, user, onClose }) 
           animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
           transition={{ duration: 2.4, repeat: Infinity }}
           className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(251,191,36,.25), transparent 65%)" }}
+          style={{ background: `radial-gradient(circle, ${colorWithAlpha(COLORS.amber, 0.25)}, transparent 65%)` }}
         />
         <motion.div
           animate={{ rotate: 360 }}
@@ -109,7 +110,7 @@ export default function LevelUpOverlay({ level, title, avatar, user, onClose }) 
         <p className="text-sm font-bold uppercase tracking-widest text-zinc-400">{user}</p>
 
         <div>
-          <p className="text-6xl font-black text-transparent" style={{ backgroundImage: "linear-gradient(135deg,#fbbf24,#f59e0b,#ec4899)", WebkitBackgroundClip: "text", backgroundClip: "text" }}>
+          <p className="text-6xl font-black text-transparent" style={{ backgroundImage: `linear-gradient(135deg, ${COLORS.amber}, #f59e0b, ${COLORS.pink})`, WebkitBackgroundClip: "text", backgroundClip: "text" }}>
             Nv. {level}
           </p>
           <p className="mt-1 text-xl font-black uppercase tracking-wide text-white">{title}</p>

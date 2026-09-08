@@ -471,7 +471,7 @@ function buildAvatar(cfg) {
     hairBack(c),
     `<circle cx="20" cy="52" r="6.5" fill="${skin}"/>`,
     `<circle cx="80" cy="52" r="6.5" fill="${skin}"/>`,
-    `<circle cx="50" cy="52" r="32" fill="${skin}/>`,
+    `<circle cx="50" cy="52" r="32" fill="${skin}"/>`,
     eyes(c),
     brows(c),
     mouth(c),

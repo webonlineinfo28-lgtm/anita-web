@@ -1,13 +1,14 @@
 ﻿import { motion } from "framer-motion";
 import { Disc3, MessageSquare, Zap, Star, Users, Crown, X, BookOpen } from "lucide-react";
+import { RULE_COLORS, colorWithAlpha, COLORS } from "../lib/colors.js";
 
 const RULES = [
   {
     id: "cabina",
     icon: Disc3,
-    color: "#ec4899",
+    color: RULE_COLORS.cabina,
     gradient: "from-pink-500/10 via-transparent to-transparent",
-    borderGlow: "rgba(236, 72, 153, 0.25)",
+    borderGlow: colorWithAlpha(RULE_COLORS.cabina, 0.25),
     label: "La Cabina DJ",
     subtitle: "M�sica y rotaci�n",
     items: [
@@ -22,9 +23,9 @@ const RULES = [
   {
     id: "bingo",
     icon: Star,
-    color: "#a855f7",
+    color: RULE_COLORS.bingo,
     gradient: "from-purple-500/10 via-transparent to-transparent",
-    borderGlow: "rgba(168, 85, 247, 0.25)",
+    borderGlow: colorWithAlpha(RULE_COLORS.bingo, 0.25),
     label: "El Bingo",
     subtitle: "Sorteo c�smico",
     items: [
@@ -39,9 +40,9 @@ const RULES = [
   {
     id: "chat",
     icon: MessageSquare,
-    color: "#22d3ee",
+    color: RULE_COLORS.chat,
     gradient: "from-cyan-500/10 via-transparent to-transparent",
-    borderGlow: "rgba(34, 211, 238, 0.25)",
+    borderGlow: colorWithAlpha(RULE_COLORS.chat, 0.25),
     label: "Chat de Sala",
     subtitle: "Comunicaci�n",
     items: [
@@ -56,9 +57,9 @@ const RULES = [
   {
     id: "fama",
     icon: Zap,
-    color: "#fbbf24",
+    color: RULE_COLORS.fama,
     gradient: "from-amber-500/10 via-transparent to-transparent",
-    borderGlow: "rgba(251, 191, 36, 0.25)",
+    borderGlow: colorWithAlpha(RULE_COLORS.fama, 0.25),
     label: "Sistema Fama",
     subtitle: "XP y niveles",
     items: [
@@ -73,9 +74,9 @@ const RULES = [
   {
     id: "convivencia",
     icon: Users,
-    color: "#34d399",
+    color: RULE_COLORS.convivencia,
     gradient: "from-emerald-500/10 via-transparent to-transparent",
-    borderGlow: "rgba(52, 211, 153, 0.25)",
+    borderGlow: colorWithAlpha(RULE_COLORS.convivencia, 0.25),
     label: "Convivencia",
     subtitle: "Normas sociales",
     items: [
@@ -90,9 +91,9 @@ const RULES = [
   {
     id: "host",
     icon: Crown,
-    color: "#f59e0b",
+    color: RULE_COLORS.host,
     gradient: "from-yellow-500/10 via-transparent to-transparent",
-    borderGlow: "rgba(245, 158, 11, 0.25)",
+    borderGlow: colorWithAlpha(RULE_COLORS.host, 0.25),
     label: "El Host",
     subtitle: "Administracion",
     items: [
@@ -139,11 +140,11 @@ export default function RulesPanel({ onClose }) {
             <div
               className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.1]"
               style={{
-                background: "linear-gradient(135deg, rgba(236,72,153,0.2) 0%, rgba(168,85,247,0.15) 100%)",
-                boxShadow: "0 0 30px rgba(236,72,153,0.3), inset 0 1px 0 rgba(255,255,255,0.1)",
+                background: `linear-gradient(135deg, ${colorWithAlpha(COLORS.pink, 0.2)} 0%, ${colorWithAlpha(COLORS.purple, 0.15)} 100%)`,
+                boxShadow: `0 0 30px ${colorWithAlpha(COLORS.pink, 0.3)}, inset 0 1px 0 rgba(255,255,255,0.1)`,
               }}
             >
-              <BookOpen size={20} style={{ color: "#ec4899", filter: "drop-shadow(0 0 8px rgba(236,72,153,0.6))" }} />
+              <BookOpen size={20} style={{ color: COLORS.pink, filter: `drop-shadow(0 0 8px ${colorWithAlpha(COLORS.pink, 0.6)})` }} />
             </div>
             <div>
               <h2 className="text-2xl font-black uppercase italic tracking-tight text-white">
@@ -242,9 +243,9 @@ export default function RulesPanel({ onClose }) {
 
         <div className="relative flex items-center justify-between px-8 py-4 shrink-0 border-t border-white/[0.05]">
           <div className="flex items-center gap-2">
-            <div className="h-px w-8 opacity-30" style={{ background: "linear-gradient(to right, transparent, #ec4899)" }} />
+            <div className="h-px w-8 opacity-30" style={{ background: `linear-gradient(to right, transparent, ${RULE_COLORS.cabina})` }} />
             <p className="text-[9px] font-semibold uppercase tracking-widest text-zinc-600">Anita Festival</p>
-            <div className="h-px w-8 opacity-30" style={{ background: "linear-gradient(to left, transparent, #ec4899)" }} />
+            <div className="h-px w-8 opacity-30" style={{ background: `linear-gradient(to left, transparent, ${RULE_COLORS.cabina})` }} />
           </div>
           <p className="text-[8px] font-bold uppercase tracking-widest text-zinc-700">la diversi�n es el unico requisito</p>
         </div>

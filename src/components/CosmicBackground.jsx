@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
+import { COLORS } from "../lib/colors.js";
 
 // Estrellas fugaces: ciclo largo CSS puro con delays escalonados.
 // Cero timers de JS, cero re-renders.
@@ -51,8 +52,8 @@ export default function CosmicBackground({ accent = "#ec4899" }) {
   const nebulae = useMemo(
     () => [
       { x: "-10%", y: "-10%", size: "40rem", color: accent, opacity: 0.14, delay: "0s" },
-      { x: "60%", y: "20%", size: "35rem", color: "#a855f7", opacity: 0.1, delay: "-4s" },
-      { x: "20%", y: "60%", size: "30rem", color: "#6366f1", opacity: 0.08, delay: "-8s" },
+      { x: "60%", y: "20%", size: "35rem", color: COLORS.purple, opacity: 0.1, delay: "-4s" },
+      { x: "20%", y: "60%", size: "30rem", color: COLORS.violet, opacity: 0.08, delay: "-8s" },
       { x: "80%", y: "70%", size: "25rem", color: accent, opacity: 0.09, delay: "-6s" },
     ],
     [accent]
@@ -95,7 +96,7 @@ export default function CosmicBackground({ accent = "#ec4899" }) {
       {stars.map((s, i) => (
         <span
           key={i}
-          className="star absolute rounded-full bg-white"
+          className="star absolute rounded-full bg-white animate-twinkle"
           style={{
             left: s.left,
             top: s.top,
@@ -104,7 +105,8 @@ export default function CosmicBackground({ accent = "#ec4899" }) {
             opacity: s.opacity,
             transform: `translate3d(calc(var(--mx) * ${s.depth.toFixed(1)}px), calc(var(--my) * ${s.depth.toFixed(1)}px), 0)`,
             transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-            animation: `twinkle ${s.duration} ease-in-out ${s.delay} infinite`,
+            animationDuration: s.duration,
+            animationDelay: s.delay,
           }}
         />
       ))}

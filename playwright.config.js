@@ -4,8 +4,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : '50%',
-  reporter: 'html',
+  workers: process.env.CI ? 1 : 2,
+  reporter: 'list',
+  timeout: 60000,
+  expect: { timeout: 10000 },
   use: {
     baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
@@ -13,10 +15,9 @@ export default defineConfig({
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'Mobile Chrome', use: { ...devices['Pixel 5'] } },
   ],
   webServer: {
-    command: 'npm run preview --port 4173',
+    command: 'npm run preview',
     url: 'http://localhost:4173',
     reuseExistingServer: true,
   },

@@ -1,4 +1,4 @@
-﻿// Claves de almacenamiento centralizadas para evitar typos y colisiones.
+// Claves de almacenamiento centralizadas para evitar typos y colisiones.
 export const STORAGE_KEYS = {
   session: "anita_session",
   playlist: "anita_playlist",
@@ -15,14 +15,17 @@ export const STORAGE_KEYS = {
   stats: "anita_stats",
 };
 
-// ContraseÃ±a del admin: definida en .env (VITE_ADMIN_PASSWORD) con fallback.
+// Contraseña del admin: definida en .env (VITE_ADMIN_PASSWORD) con fallback.
+// Compatible con browser (import.meta.env) y Node.js (process.env).
 export const getAdminPassword = () =>
-  import.meta.env.VITE_ADMIN_PASSWORD || "uwu777";
+  (typeof import.meta !== "undefined" && import.meta.env
+    ? import.meta.env.VITE_ADMIN_PASSWORD
+    : process.env.VITE_ADMIN_PASSWORD) || "uwu777";
 
 // Nombre sugerido para el host del festival.
 export const HOST_USERNAME = "Anita_sorrita";
 
-// NÃºmero de segundos que el bombo espera tras una lÃ­nea/bingo.
+// Número de segundos que el bombo espera tras una línea/bingo.
 export const PAUSE_AFTER_WIN_MS = 13000;
 // Intervalo entre bolas del bombo.
 export const DRAW_INTERVAL_MS = 3000;

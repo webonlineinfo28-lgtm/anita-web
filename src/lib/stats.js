@@ -5,6 +5,8 @@
 // permite cambiar el arte gráfico en un solo sitio.
 // ---------------------------------------------------------------------------
 
+import { COLORS } from "./colors.js";
+
 export const XP_EVENTS = {
   bingo: 150,
   line: 60,
@@ -25,15 +27,15 @@ export const LEVEL_TITLES = [
 ];
 
 export const BADGES = [
-  { id: "first-bingo", name: "Primer Bingo",        desc: "Consigue tu primer bingo",            icon: "ticket", color: "#ec4899", check: (s) => s.bingos >= 1 },
-  { id: "bingo-10",    name: "Bingo Master",        desc: "10 bingos en tu historial",          icon: "ticket", color: "#fbbf24", check: (s) => s.bingos >= 10 },
-  { id: "first-line",  name: "Línea Fatal",         desc: "Completa tu primera línea",          icon: "zap",    color: "#a855f7", check: (s) => s.lines >= 1 },
-  { id: "dj-debut",    name: "DJ Debut",            desc: "Pon tu primera canción en la cabina",icon: "disc",   color: "#22d3ee", check: (s) => s.djSets >= 1 },
-  { id: "five-sets",   name: "Set de Lujo",         desc: "5 sets de DJ",                       icon: "disc",   color: "#34d399", check: (s) => s.djSets >= 5 },
-  { id: "promotor",    name: "Promotor",            desc: "Añade 5 canciones a la fiesta",      icon: "plus",   color: "#f59e0b", check: (s) => s.songsAdded >= 5 },
-  { id: "favorite",    name: "Muy Querido",         desc: "10 reacciones recibidas",            icon: "heart",  color: "#ec4899", check: (s) => s.reactionsReceived >= 10 },
-  { id: "star-1000",   name: "Estrella",            desc: "Alcanzaste 1.000 XP",                icon: "star",   color: "#fbbf24", check: (s) => s.xp >= 1000 },
-  { id: "cosmic-legend", name: "Leyenda Cósmica",   desc: "Alcanzaste 5.000 XP",                icon: "crown",  color: "#a855f7", check: (s) => s.xp >= 5000 },
+  { id: "first-bingo", name: "Primer Bingo",        desc: "Consigue tu primer bingo",            icon: "ticket", color: COLORS.pink, check: (s) => s.bingos >= 1 },
+  { id: "bingo-10",    name: "Bingo Master",        desc: "10 bingos en tu historial",          icon: "ticket", color: COLORS.amber, check: (s) => s.bingos >= 10 },
+  { id: "first-line",  name: "Línea Fatal",         desc: "Completa tu primera línea",          icon: "zap",    color: COLORS.purple, check: (s) => s.lines >= 1 },
+  { id: "dj-debut",    name: "DJ Debut",            desc: "Pon tu primera canción en la cabina",icon: "disc",   color: COLORS.cyan, check: (s) => s.djSets >= 1 },
+  { id: "five-sets",   name: "Set de Lujo",         desc: "5 sets de DJ",                       icon: "disc",   color: COLORS.emerald, check: (s) => s.djSets >= 5 },
+  { id: "promotor",    name: "Promotor",            desc: "Añade 5 canciones a la fiesta",      icon: "plus",   color: COLORS.amber, check: (s) => s.songsAdded >= 5 },
+  { id: "favorite",    name: "Muy Querido",         desc: "10 reacciones recibidas",            icon: "heart",  color: COLORS.pink, check: (s) => s.reactionsReceived >= 10 },
+  { id: "star-1000",   name: "Estrella",            desc: "Alcanzaste 1.000 XP",                icon: "star",   color: COLORS.amber, check: (s) => s.xp >= 1000 },
+  { id: "cosmic-legend", name: "Leyenda Cósmica",   desc: "Alcanzaste 5.000 XP",                icon: "crown",  color: COLORS.purple, check: (s) => s.xp >= 5000 },
 ];
 
 export function createStats() {

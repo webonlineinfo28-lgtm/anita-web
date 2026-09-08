@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Dices, X, Triangle, PartyPopper, Circle } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
+import { COLORS } from "../lib/colors.js";
 
 const SPIN_MS = 3400;
 const REVEAL_MS = 900;
@@ -90,7 +91,7 @@ export default function DjWheel({ users = [], avatars = {}, onPick, onClose }) {
         {winnerIdx !== null && (
           <p className="mb-3 flex items-center justify-center gap-2 text-lg font-black uppercase tracking-tighter">
             <PartyPopper size={18} className="text-amber-400" />
-            <span style={{ color: "#fbbf24" }}>{users[winnerIdx]}</span> sube a la cabina
+            <span style={{ color: COLORS.amber }}>{users[winnerIdx]}</span> sube a la cabina
           </p>
         )}
 

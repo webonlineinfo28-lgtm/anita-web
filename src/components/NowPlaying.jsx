@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Disc3, Heart, Pause, Play, SkipForward } from "lucide-react";
 import { useEffect, useState } from "react";
 import Avatar from "./Avatar.jsx";
+import { COLORS } from "../lib/colors.js";
 
 // Convierte una URL en un título legible sin depender de APIs externas.
 function prettyTitle(url) {
@@ -34,7 +35,7 @@ export default function NowPlaying({
   track,
   dj,
   djAvatar,
-  accent = "#ec4899",
+  accent = COLORS.pink,
   isPlaying,
   played = 0, // fracción 0..1
   playedSeconds = 0,
@@ -106,7 +107,7 @@ export default function NowPlaying({
                     className="h-full rounded-full transition-[width] duration-500 ease-linear"
                     style={{
                       width: `${Math.min(100, Math.max(0, played * 100))}%`,
-                      background: `linear-gradient(90deg, ${accent}, #a855f7)`,
+                      background: `linear-gradient(90deg, ${accent}, ${COLORS.purple})`,
                       boxShadow: `0 0 8px ${accent}88`,
                     }}
                   />

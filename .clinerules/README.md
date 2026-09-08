@@ -1,3 +1,21 @@
+# Clinerules — Anita Festival
+
+Reglas del proyecto para agentes de IA.
+
+## Archivos
+
+| Archivo | Descripción |
+|---------|-------------|
+| [project.md](./project.md) | Resumen del proyecto, arquitectura, convenciones |
+| [auditoria.md](./auditoria.md) | Reglas de auditoría de código |
+
+## Uso
+
+El agente de IA debe leer estos archivos al inicio de cada sesión.
+
+## Actualización
+
+Cuando el proyecto cambie, actualizar estos archivos primero.
 ﻿# ðŸª© Anita Festival 2.0 â€” la locura cÃ³smica
 
 Sala de fiestas social estilo **plug.dj** con sabor cÃ³smico: **cabina de DJ con lista de espera y rotaciÃ³n**, **avatares procedenciales 100% editables**, **chat de sala con reacciones flotantes**, **bingo compartido** y **sistema de fama con niveles e insignias**.

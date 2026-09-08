@@ -13,6 +13,7 @@ import {
   SkipForward,
   Trash2,
 } from "lucide-react";
+import { COLORS, colorWithAlpha } from "../lib/colors.js";
 
 const ReactPlayer = lazy(() => import("react-player"));
 
@@ -240,7 +241,7 @@ export default function PlayerPanel(props) {
                 className="h-full rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400"
                 style={{
                   width: `${Math.min(100, Math.max(0, played * 100))}%`,
-                  boxShadow: "0 0 8px rgba(236,72,153,0.5)",
+                  boxShadow: `0 0 8px ${colorWithAlpha(COLORS.pink, 0.5)}`,
                 }}
               />
             </div>

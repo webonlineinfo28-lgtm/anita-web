@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Disc3, Mic2, Crown, User, Sparkles, Zap } from "lucide-react";
 import { getAdminPassword } from "../lib/constants.js";
+import { COLORS, colorWithAlpha } from "../lib/colors.js";
 import "./login-screen.css";
 
 export default function LoginScreen({ onLogin }) {
@@ -56,7 +57,7 @@ export default function LoginScreen({ onLogin }) {
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           >
-            <Disc3 size={48} style={{ color: "#ec4899", filter: "drop-shadow(0 0 12px rgba(236,72,153,0.6))" }} />
+            <Disc3 size={48} style={{ color: COLORS.pink, filter: `drop-shadow(0 0 12px ${colorWithAlpha(COLORS.pink, 0.6)})` }} />
           </motion.div>
         </div>
 
@@ -128,7 +129,7 @@ export default function LoginScreen({ onLogin }) {
                 className="login-host-field"
               >
                 <div className="login-input-wrapper">
-                  <Crown size={14} className="login-input-icon" style={{ color: "#fbbf24" }} />
+                  <Crown size={14} className="login-input-icon" style={{ color: COLORS.amber }} />
                   <input
                     type="password"
                     value={hostKey}

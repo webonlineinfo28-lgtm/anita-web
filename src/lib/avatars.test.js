@@ -6,6 +6,7 @@ import {
   AVATAR_PALETTES,
   EYES,
   HAIRS,
+  PET_KEYS,
   mergeAvatar,
   normalizeAvatar,
   randomAvatar,
@@ -66,4 +67,27 @@ test("mergeAvatar combina override parcial respetando los campos presentes", () 
   assert.equal(merged.hair, "ponytail");
   assert.equal(merged.skin, base.skin);
   assert.equal(base.hair, "spiky");
+});
+test("mascotas: normalizeAvatar sanea claves inv�lidas, renderAvatar jam�s inyecta", () => {
+  // Clave inv�lida ? se sustituye por 'none'
+  const sanePet = normalizeAvatar({ pet: "<script>alert(1)</script>" });
+  assert.equal(sanePet.pet, "none");
+
+  // Clave null/undefined ? 'none'
+  const nullPet = normalizeAvatar({ pet: null });
+  assert.equal(nullPet.pet, "none");
+
+  // Todas las mascotas del cat�logo son SVG puros (sin emojis, sin texto libre)
+  for (const petKey of PET_KEYS) {
+    const svg = renderAvatar({ pet: petKey });
+    assert.ok(svg.startsWith("<svg"), `pet=${petKey} debe empezar con <svg`);
+    assert.ok(!svg.includes("<script"), `pet=${petKey} no puede contener <script`);
+    assert.ok(!svg.includes("onerror="), `pet=${petKey} no puede contener onerror`);
+    assert.ok(!svg.includes("innerHTML"), `pet=${petKey} no puede contener innerHTML`);
+  }
+
+  // El SVG del render final es XML bien formado (cierra el tag)
+  const svg = renderAvatar({ pet: "cat" });
+  assert.ok(svg.endsWith("</svg>"), "SVG debe cerrar con </svg>");
+  assert.ok(!svg.includes("undefined"), "SVG no puede contener undefined");
 });

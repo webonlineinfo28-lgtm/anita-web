@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, CheckCircle2, Info, Trophy, X } from "lucide-react";
+import { TOAST_COLORS, colorWithAlpha } from "../lib/colors.js";
 
 const TYPES = {
-  success: { icon: CheckCircle2, color: "#34d399", bg: "rgba(52,211,153,.12)", border: "rgba(52,211,153,.35)" },
-  info: { icon: Info, color: "#22d3ee", bg: "rgba(34,211,238,.12)", border: "rgba(34,211,238,.35)" },
-  warning: { icon: AlertTriangle, color: "#fbbf24", bg: "rgba(251,191,36,.12)", border: "rgba(251,191,36,.35)" },
-  levelup: { icon: Trophy, color: "#fbbf24", bg: "rgba(251,191,36,.15)", border: "rgba(251,191,36,.45)" },
+  success: { icon: CheckCircle2, color: TOAST_COLORS.success, bg: colorWithAlpha(TOAST_COLORS.success, 0.12), border: colorWithAlpha(TOAST_COLORS.success, 0.35) },
+  info: { icon: Info, color: TOAST_COLORS.info, bg: colorWithAlpha(TOAST_COLORS.info, 0.12), border: colorWithAlpha(TOAST_COLORS.info, 0.35) },
+  warning: { icon: AlertTriangle, color: TOAST_COLORS.warning, bg: colorWithAlpha(TOAST_COLORS.warning, 0.12), border: colorWithAlpha(TOAST_COLORS.warning, 0.35) },
+  levelup: { icon: Trophy, color: TOAST_COLORS.levelup, bg: colorWithAlpha(TOAST_COLORS.levelup, 0.15), border: colorWithAlpha(TOAST_COLORS.levelup, 0.45) },
 };
 
 let toastId = 0;

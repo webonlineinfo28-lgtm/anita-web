@@ -12,6 +12,7 @@ import {
 
 import Avatar from "./Avatar.jsx";
 import { AVATAR_PALETTES } from "../lib/avatars.js";
+import { COLORS } from "../lib/colors.js";
 
 function Bursts({ bursts }) {
   return (
@@ -27,7 +28,7 @@ function Bursts({ bursts }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 1.4, ease: "easeOut" }}
               className="absolute left-1/2 top-1/2 -translate-x-1/2"
-              style={{ color: b.color || "#ec4899" }}
+              style={{ color: b.color || COLORS.pink }}
             >
               <Icon size={32} />
             </motion.span>
@@ -78,7 +79,7 @@ export default function DjBoothCard({
   reactionsTotal = 0,
 }) {
   // Guard doble: paleta indefinida o acento desconocido nunca deben romper la cabina.
-  const accent = AVATAR_PALETTES.accent?.[djAvatar?.accent] || "#ec4899";
+  const accent = AVATAR_PALETTES.accent?.[djAvatar?.accent] || COLORS.pink;
   const isHostPlayer = isAdmin && currentDj === sessionUser;
   const hasDj = !!currentDj;
   // Progreso siempre acotado a [0,1] para que la barra no desborde.
@@ -197,7 +198,7 @@ export default function DjBoothCard({
             style={{
               background: "rgba(251, 191, 36, 0.1)",
               border: "1px solid rgba(251, 191, 36, 0.3)",
-              color: "#fbbf24",
+              color: COLORS.amber,
             }}
           >
             <Shuffle size={14} /> Sorteo

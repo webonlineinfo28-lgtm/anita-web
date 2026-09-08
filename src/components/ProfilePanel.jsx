@@ -5,13 +5,14 @@ import Avatar from "./Avatar.jsx";
 import StatIcon from "./StatIcon.jsx";
 import { BADGES } from "../lib/stats.js";
 import { levelProgress } from "../lib/stats.js";
+import { STAT_COLORS } from "../lib/colors.js";
 
 
 const STAT_ICONS = [
-  { label: "Bingos", key: "bingos", Icon: Target, color: "#ec4899" },
-  { label: "Líneas", key: "lines", Icon: Ruler, color: "#a855f7" },
-  { label: "Sets DJ", key: "djSets", Icon: Disc3, color: "#22d3ee" },
-  { label: "Reacciones", key: "reactionsReceived", Icon: Heart, color: "#fbbf24" },
+  { label: "Bingos", key: "bingos", Icon: Target, color: STAT_COLORS.bingos },
+  { label: "Líneas", key: "lines", Icon: Ruler, color: STAT_COLORS.lines },
+  { label: "Sets DJ", key: "djSets", Icon: Disc3, color: STAT_COLORS.djSets },
+  { label: "Reacciones", key: "reactionsReceived", Icon: Heart, color: STAT_COLORS.reactionsReceived },
 ];
 
 export default function ProfilePanel({ user, isAdmin, avatar, stats, onClose }) {

@@ -2,13 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, MessageSquare, Heart, Star, Zap, PartyPopper, Sparkles, Smile } from "lucide-react";
 import Avatar from "./Avatar.jsx";
+import { REACTION_COLORS, colorWithAlpha } from "../lib/colors.js";
 
 const REACTIONS = [
-  { emoji: "Heart", icon: Heart, color: "#ec4899", glow: "rgba(236,72,153,0.4)" },
-  { emoji: "Star", icon: Star, color: "#fbbf24", glow: "rgba(251,191,36,0.4)" },
-  { emoji: "Zap", icon: Zap, color: "#a855f7", glow: "rgba(168,85,247,0.4)" },
-  { emoji: "Party", icon: PartyPopper, color: "#22d3ee", glow: "rgba(34,211,238,0.4)" },
-  { emoji: "Sparkles", icon: Sparkles, color: "#34d399", glow: "rgba(52,211,153,0.4)" },
+  { emoji: "Heart", icon: Heart, color: REACTION_COLORS.heart, glow: colorWithAlpha(REACTION_COLORS.heart, 0.4) },
+  { emoji: "Star", icon: Star, color: REACTION_COLORS.star, glow: colorWithAlpha(REACTION_COLORS.star, 0.4) },
+  { emoji: "Zap", icon: Zap, color: REACTION_COLORS.zap, glow: colorWithAlpha(REACTION_COLORS.zap, 0.4) },
+  { emoji: "Party", icon: PartyPopper, color: REACTION_COLORS.party, glow: colorWithAlpha(REACTION_COLORS.party, 0.4) },
+  { emoji: "Sparkles", icon: Sparkles, color: REACTION_COLORS.sparkles, glow: colorWithAlpha(REACTION_COLORS.sparkles, 0.4) },
 ];
 
 function FloatingReaction({ icon: Icon, color }) {

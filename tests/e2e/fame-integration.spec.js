@@ -1,23 +1,47 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Stats & Fame", () => {
-  test("user can login", async ({ page }) => {
+test.describe("Fame System Integration", () => {
+  test("should display fame system with ranking", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    await page.fill('input[placeholder*="Tu nombre"]', "StatsUser");
+    await page.fill('input[placeholder*="Tu nombre"]', "FameUser");
     await page.click("text=Entrar al Festival");
     await page.waitForTimeout(500);
 
-    const userText = page.locator("text=StatsUser");
-    await expect(userText).toBeVisible({ timeout: 3000 });
+    const ranking = page.locator("text=/Ranking|Top|Leyendas/i");
+    await expect(ranking.first()).toBeVisible({ timeout: 5000 });
   });
 
-  test("stats exist in localStorage", async ({ page }) => {
+  test("should show user info in header", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    await page.fill('input[placeholder*="Tu nombre"]', "XPUser");
+    await page.fill('input[placeholder*="Tu nombre"]', "UserInfo");
+    await page.click("text=Entrar al Festival");
+    await page.waitForTimeout(500);
+
+    const userText = page.locator("text=UserInfo");
+    await expect(userText).toBeVisible({ timeout: 3000 });
+  });
+
+  test("should display ranking section", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    await page.fill('input[placeholder*="Tu nombre"]', "RankDisplay");
+    await page.click("text=Entrar al Festival");
+    await page.waitForTimeout(500);
+
+    const ranking = page.locator("text=/Ranking|Top|Leyendas/i");
+    await expect(ranking.first()).toBeVisible({ timeout: 3000 });
+  });
+
+  test("stats exist in localStorage after login", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    await page.fill('input[placeholder*="Tu nombre"]', "StatsCheck");
     await page.click("text=Entrar al Festival");
     await page.waitForTimeout(500);
 
@@ -27,31 +51,7 @@ test.describe("Stats & Fame", () => {
     expect(stats).toBeDefined();
   });
 
-  test("user visible in header after login", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    await page.fill('input[placeholder*="Tu nombre"]', "ProfileCheck");
-    await page.click("text=Entrar al Festival");
-    await page.waitForTimeout(500);
-
-    const userText = page.locator("text=ProfileCheck");
-    await expect(userText).toBeVisible({ timeout: 3000 });
-  });
-
-  test("ranking section visible", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    await page.fill('input[placeholder*="Tu nombre"]', "RankingUser");
-    await page.click("text=Entrar al Festival");
-    await page.waitForTimeout(500);
-
-    const ranking = page.locator("text=/Ranking|Top/i");
-    await expect(ranking.first()).toBeVisible({ timeout: 3000 });
-  });
-
-  test("XP can be updated in localStorage", async ({ page }) => {
+  test("XP can be stored in localStorage", async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 

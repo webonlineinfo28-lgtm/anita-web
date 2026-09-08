@@ -20,12 +20,13 @@ import LevelUpOverlay from "./components/LevelUpOverlay.jsx";
 import ToastContainer, { makeToast } from "./components/Toast.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { levelProgress } from "./lib/stats.js";
+import { STORAGE_KEYS } from "./lib/constants.js";
 import "./App.css";
 
 function App() {
   const [session, setSession] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem("anita_session")) || null;
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.session)) || null;
     } catch {
       return null;
     }
@@ -35,7 +36,7 @@ function App() {
     const newSession = { user: name, role: isHost ? 'admin' : 'player', loginTime: new Date().toISOString() };
     setSession(newSession);
     try {
-      localStorage.setItem("anita_session", JSON.stringify(newSession));
+      localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(newSession));
     } catch (e) {
       console.error("Error saving session:", e);
     }
@@ -43,7 +44,7 @@ function App() {
 
   const handleLogout = useCallback(() => {
     try {
-      localStorage.removeItem("anita_session");
+      localStorage.removeItem(STORAGE_KEYS.session);
     } catch {
       /* ignore */
     }
@@ -157,7 +158,7 @@ function AppAuthenticated({ session, onLogout }) {
   return (
     <>
       <CosmicBackground accent={djAccent} />
-      <div className="relative z-10 min-h-screen text-white p-4 md:p-8 font-sans overflow-x-hidden">
+      <div className="relative z-10 min-h-screen text-white p-4 md:p-8 font-sans overflow-x-hidden flex flex-col h-screen w-full overflow-hidden">
         {addError && (
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
             <div className="bg-red-500/20 backdrop-blur-md border border-red-500/30 rounded-2xl px-6 py-3 flex items-center gap-3 text-red-400 animate-bounce">
@@ -211,13 +212,13 @@ function AppAuthenticated({ session, onLogout }) {
           </section>
 
           {/* ═══ GRID SOCIAL: Bingo | Chat | Ranking ═══ */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-4 items-start">
+          <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-4 items-start min-h-0 flex-1 overflow-hidden">
             <ErrorBoundary label="El bingo">
               <ErrorBoundary label="Bingo">
               <BingoPanel bingo={bingo} avatars={room.avatars} isAdmin={isAdmin} />
             </ErrorBoundary>
             </ErrorBoundary>
-            <div className="flex flex-col order-first xl:order-none lg:col-span-2 xl:col-span-1" style={{ minHeight: "420px", maxHeight: "560px" }}>
+            <div className="flex flex-col order-first xl:order-none lg:col-span-2 xl:col-span-1 min-h-0" style={{ minHeight: "420px", maxHeight: "560px" }}>
               <ErrorBoundary label="El chat">
                 <ErrorBoundary label="Chat">
                 <ChatPanel messages={room.messages} avatars={room.avatars} onSend={room.sendMessage} onReact={room.react} trackReactions={room.trackReactions} />
