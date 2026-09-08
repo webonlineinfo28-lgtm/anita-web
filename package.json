@@ -15,7 +15,7 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,css}\"",
-    "prepare": "husky install"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
