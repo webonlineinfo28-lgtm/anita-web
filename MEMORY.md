@@ -30,7 +30,7 @@
 - Layout página: `min-h-screen ... overflow-x-clip pb-32` (el `pb-32` compensa la barra `NowPlaying` fija `bottom-0 z-40`).
 - Chat: altura fija `h-[560px] lg:h-[600px]` — solo la lista de mensajes scrollea internamente (`ChatPanel` → `flex-1 overflow-y-auto cosmic-scrollbar`, correcto).
 - Scroll interno válido SOLO en: mensajes de chat, bolas de bingo (`max-h-[140px]`), carrusel PlayerPanel (`overflow-x-auto`).
-- Botón "Volver arriba" estándar (lucide `ArrowUp`, aparece con `scrollY > 600`, `scrollTo smooth`).
+- Botón "Volver arriba" estándar: SOLO el componente `ScrollTopButton` (definido al final de `App.jsx`, con throttling rAF, lucide `ArrowUp`, aparece con `scrollY > 600`, `scrollTo smooth`). FIX: existía un duplicado inline (estado `showTop` + JSX propio) que se superponía — eliminado en commit `65b9548`. NO recrear implementaciones paralelas de este botón.
 - `index.css`: `scroll-padding-bottom: 120px`, `body { overflow-y:auto }`, sin `overflow:hidden` global.
 
 ### 2. Sync 100% online (sync.js)
