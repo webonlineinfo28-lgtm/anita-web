@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Dices, RotateCcw, X } from "lucide-react";
 
 import Avatar from "./Avatar.jsx";
@@ -11,7 +11,7 @@ import {
   HAIRS,
   HATS,
   MOUTHS,
-  PETS,
+  PET_KEYS,
   normalizeAvatar,
   randomAvatar,
 } from "../lib/avatars.js";
@@ -184,11 +184,11 @@ export default function AvatarEditor({ config, onSave, onClose }) {
         );
       case "pet":
         return (
-          <PickerRow label="Mascota compaÃƒÂ±era">
-            {Object.entries(PETS).map(([k, emoji]) => (
+          <PickerRow label="Mascota compañera">
+            {PET_KEYS.map((k) => (
               <Chip
                 key={k}
-                label={emoji ? `${emoji} ${k}` : "Ninguna"}
+                label={k === "none" ? "Ninguna" : k}
                 active={draft.pet === k}
                 onClick={() => set("pet", k)}
               />

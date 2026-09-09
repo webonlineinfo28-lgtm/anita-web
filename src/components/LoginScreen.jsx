@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Disc3, Mic2, Crown, User, Sparkles, Zap } from "lucide-react";
 import { getAdminPassword } from "../lib/constants.js";

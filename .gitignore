@@ -1,14 +1,25 @@
+# Dependencias y build
 node_modules/
 dist/
+
+# Entorno (pero NO el ejemplo)
 .env
 .env.local
+.env.*.local
+!.env.example
+
+# Test y coverage
 coverage/
-.playwright/
-.vscode-test/
-*.log
 playwright-report/
 test-results/
+.playwright/
+
+# Logs y editores
+*.log
+.vscode-test/
+
+# Deploy
+.vercel/
 write_deploy.cjs
 write_deploy.js
 write_deploy.py
-.vercel/

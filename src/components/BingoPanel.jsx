@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Crown, Play, Pause, RotateCcw, Sparkles, Star, Dice1 } from 'lucide-react';
+import { isCellInWinningLine } from '../lib/bingo-core.js';
 
 const LETTERS = ['B', 'I', 'N', 'G', 'O'];
 const TOTAL = 75;
 
-const COLORS = {
+const LETTER_STYLES = {
   B: { bg: 'bg-blue-500', text: 'text-blue-400' },
   I: { bg: 'bg-purple-500', text: 'text-purple-400' },
   N: { bg: 'bg-pink-500', text: 'text-pink-400' },
@@ -15,7 +16,7 @@ const COLORS = {
 
 function Cell({ cell, marked, isWinning }) {
   const { letter, number, isCenter } = cell;
-  const color = COLORS[letter];
+  const color = LETTER_STYLES[letter] || LETTER_STYLES.N;
   
   return (
     <motion.div
@@ -41,7 +42,7 @@ export default function BingoPanel({ bingo, isAdmin }) {
   if (!Array.isArray(card) || card.length !== 25) {
     return (
       <div className="glass-card p-4 flex flex-col h-full items-center justify-center gap-4">
-        <div className="animate-pulse flex gap-1">{LETTERS.map(l => <div key={l} className={`h-8 w-8 rounded ${COLORS[l].bg}`} />)}</div>
+        <div className="animate-pulse flex gap-1">{LETTERS.map(l => <div key={l} className={`h-8 w-8 rounded ${LETTER_STYLES[l].bg}`} />)}</div>
         <p className="text-sm text-zinc-500">Cargando...</p>
       </div>
     );
@@ -64,12 +65,12 @@ export default function BingoPanel({ bingo, isAdmin }) {
       <div className="flex gap-4 flex-1 min-h-0">
         <div className="flex-1">
           <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-2">{markedCount}/25</p>
-          <div className="grid grid-cols-5 gap-1 mb-2">{card.map((cell, i) => <Cell key={i} cell={cell} marked={cell.isCenter || drawnNumbers.includes(cell.number)} isWinning={wins.bingo || (wins.lines && wins.lines.some(l => l.index === Math.floor(i / 5)))} />)}</div>
-          <div className="grid grid-cols-5 gap-1">{LETTERS.map((l, i) => <div key={i} className={`h-5 flex items-center justify-center rounded text-[10px] font-black ${COLORS[l].bg} text-white`}>{l}</div>)}</div>
+          <div className="grid grid-cols-5 gap-1 mb-2">{card.map((cell, i) => <Cell key={`${cell.letter}-${cell.number}-${i}`} cell={cell} marked={cell.isCenter || drawnNumbers.includes(cell.number)} isWinning={wins.bingo || isCellInWinningLine(i, wins.lines || [])} />)}</div>
+          <div className="grid grid-cols-5 gap-1">{LETTERS.map((l, i) => <div key={i} className={`h-5 flex items-center justify-center rounded text-[10px] font-black ${LETTER_STYLES[l].bg} text-white`}>{l}</div>)}</div>
         </div>
         <div className="flex-1">
           <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-2">Bolas</p>
-          <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">{LETTERS.map(l => { const balls = drawnNumbers.filter(n => { if (l === 'B') return n <= 15; if (l === 'I') return n > 15 && n <= 30; if (l === 'N') return n > 30 && n <= 45; if (l === 'G') return n > 45 && n <= 60; return n > 60; }); if (balls.length === 0) return null; return <div key={l} className="flex items-center gap-1.5"><span className={`text-[9px] font-black w-3 ${COLORS[l].text}`}>{l}</span><div className="flex gap-1 flex-wrap">{balls.map((n, i) => <motion.span key={`${n}-${i}`} initial={{ scale: 0 }} animate={{ scale: 1 }} className={`h-5 w-5 flex items-center justify-center rounded text-[9px] font-bold ${COLORS[l].bg} text-white`}>{n}</motion.span>)}</div></div>; })}</div>
+          <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">{LETTERS.map(l => { const balls = drawnNumbers.filter(n => { if (l === 'B') return n <= 15; if (l === 'I') return n > 15 && n <= 30; if (l === 'N') return n > 30 && n <= 45; if (l === 'G') return n > 45 && n <= 60; return n > 60; }); if (balls.length === 0) return null; return <div key={l} className="flex items-center gap-1.5"><span className={`text-[9px] font-black w-3 ${LETTER_STYLES[l].text}`}>{l}</span><div className="flex gap-1 flex-wrap">{balls.map((n, i) => <motion.span key={`${n}-${i}`} initial={{ scale: 0 }} animate={{ scale: 1 }} className={`h-5 w-5 flex items-center justify-center rounded text-[9px] font-bold ${LETTER_STYLES[l].bg} text-white`}>{n}</motion.span>)}</div></div>; })}</div>
         </div>
       </div>
       <div className="flex gap-2 mt-3 pt-3 border-t border-white/10">

@@ -45,6 +45,8 @@ export function generateBingoCard() {
 // Comprueba victorias dado el cartón y los números ya extraídos.
 // Devuelve { lines, hasLine, bingo }.
 export function checkWin(card, drawnNumbers) {
+  if (!Array.isArray(card) || card.length !== 25) return { lines: [], hasLine: false, bingo: false };
+  const list = drawnNumbers instanceof Set ? [...drawnNumbers] : (Array.isArray(drawnNumbers) ? drawnNumbers : []);
   const drawn = new Set(drawnNumbers);
 
   const grid = [];
@@ -93,6 +95,7 @@ export function checkWin(card, drawnNumbers) {
 }
 
 // Números que aún no han salido (1..75).
+export function numbersForLetter(letter){const R={B:[1,15],I:[16,30],N:[31,45],G:[46,60],O:[61,75]};const r=R[letter];return r?[r[0],r[1]]:null;}
 export function getAvailableNumbers(drawnNumbers) {
   const drawn = new Set(drawnNumbers);
   const nums = [];

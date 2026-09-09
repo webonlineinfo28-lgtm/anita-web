@@ -14,11 +14,12 @@ export function sanitizeText(text) {
 }
 
 // Crea un mensaje de chat válido.
+export function isValidUser(user){return typeof user==='string'&&user.trim().length>0&&user.trim().length<=40;}
 export function createChatMessage({ user, text, type = "message", time }) {
   const clean = sanitizeText(text);
   return {
     id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
-    user: sanitizeText(user || "Anónimo") || "Anónimo",
+    user: sanitizeUser(user),
     text: clean,
     type: type === "system" ? "system" : "message",
     time: time || Date.now(),
@@ -30,6 +31,8 @@ export function pushMessage(history, message) {
   if (!message || !message.text) return history;
   return [...history, message].slice(-CHAT_MAX);
 }
+
+function sanitizeUser(user){const c=sanitizeText(user||'Anónimo');return c||'Anónimo';}
 
 // Mensaje del sistema.
 export function systemMessage(text, time) {

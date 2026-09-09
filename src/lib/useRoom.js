@@ -1,8 +1,9 @@
-﻿import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createChannel, mergeUserMaps } from "./sync.js";
 import { STORAGE_KEYS } from "./constants.js";
 import { createChatMessage, pushMessage, systemMessage } from "./chat-core.js";
 import { joinWaitlist, leaveWaitlist, rotateWaitlist } from "./waitlist-core.js";
+import { addXp } from "./stats.js";
 
 const readJSON = (key, fallback) => {
   try {
@@ -279,8 +280,7 @@ export function useRoom(session) {
     const list = roomStateRef.current.playlist;
     const idx = list.findIndex((t) => t.id === id);
     if (idx <= 0) return;
-    const [song] = list.splice(idx, 1);
-    const next = [song, ...list];
+    const next = [list[idx], ...list.slice(0, idx), ...list.slice(idx + 1)];
     setPlaylist(next);
     broadcastRef.current && broadcastRef.current({ playlist: next });
   }, [user, dj, isAdmin]);
@@ -302,11 +302,12 @@ export function useRoom(session) {
 
   // Handle seek events (called by react-player onSeek)
   const onSeek = useCallback((seconds) => {
+    const dur = durationRef.current > 0 ? durationRef.current : 0;
     setPlayedSeconds(seconds);
-    setPlayed(seconds / (durationRef.current || 1));
+    setPlayed(dur > 0 ? seconds / dur : 0);
     broadcastRef.current && broadcastRef.current({
       playedSeconds: seconds,
-      played: seconds / (durationRef.current || 1),
+      played: dur > 0 ? seconds / dur : 0,
     });
   }, []);
 

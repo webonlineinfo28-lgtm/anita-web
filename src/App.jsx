@@ -1,5 +1,5 @@
-﻿import { AnimatePresence, motion } from "framer-motion";
-import { History, User, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUp, History, User, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useBingo } from "./hooks/useBingo.js";
 import { useRoom } from "./lib/useRoom.js";
@@ -108,6 +108,16 @@ function AppAuthenticated({ session, onLogout }) {
   const [showAvatarEditor, setShowAvatarEditor] = useState(false);
   const [roomMode, setRoomMode] = useState("normal"); // "normal" | "projector"
 
+  // Botón "volver arriba": solo visible tras hacer scroll (patrón estándar,
+  // no interfiere con la lectura como hacía el toggle de bloqueo).
+  const [showTop, setShowTop] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 600);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   // ─── Sistema de notificaciones Toast ───
   const [toasts, setToasts] = useState([]);
   const pushToast = useCallback((type, message) => {
@@ -158,11 +168,11 @@ function AppAuthenticated({ session, onLogout }) {
   return (
     <>
       <CosmicBackground accent={djAccent} />
-      <div className="relative z-10 min-h-screen text-white p-4 md:p-8 font-sans overflow-x-hidden flex flex-col h-screen w-full overflow-hidden">
+      <div className="relative z-10 min-h-screen text-white p-4 md:p-8 font-sans overflow-x-hidden flex flex-col gap-4 pb-32">
         {addError && (
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
             <div className="bg-red-500/20 backdrop-blur-md border border-red-500/30 rounded-2xl px-6 py-3 flex items-center gap-3 text-red-400 animate-bounce">
-              <AlertCircle size={18} />
+              <X size={18} />
               <span className="text-sm font-bold">{addError}</span>
               <button onClick={() => setAddError(null)} className="ml-2 hover:text-white transition-colors">
                 <X size={16} />
@@ -183,7 +193,7 @@ function AppAuthenticated({ session, onLogout }) {
           onProfile={() => setShowProfile(true)}
         />
 
-                <main className="max-w-[1600px] mx-auto px-4 pb-36">
+                <main className="mx-auto w-full flex flex-col gap-4">
           {/* ═══ DJ BOOTH — EL SOL CENTRAL DEL FESTIVAL ═══ */}
           <section className="mb-5">
             <div className="mx-auto w-full max-w-5xl">
@@ -212,13 +222,13 @@ function AppAuthenticated({ session, onLogout }) {
           </section>
 
           {/* ═══ GRID SOCIAL: Bingo | Chat | Ranking ═══ */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-4 items-start min-h-0 flex-1 overflow-hidden">
+          <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-4 min-h-0 flex-1">
             <ErrorBoundary label="El bingo">
               <ErrorBoundary label="Bingo">
               <BingoPanel bingo={bingo} avatars={room.avatars} isAdmin={isAdmin} />
             </ErrorBoundary>
             </ErrorBoundary>
-            <div className="flex flex-col order-first xl:order-none lg:col-span-2 xl:col-span-1 min-h-0" style={{ minHeight: "420px", maxHeight: "560px" }}>
+            <div className="flex-1 min-h-0 flex flex-col order-first xl:order-none lg:col-span-2 xl:col-span-1" style={{ minHeight: "420px" }}>
               <ErrorBoundary label="El chat">
                 <ErrorBoundary label="Chat">
                 <ChatPanel messages={room.messages} avatars={room.avatars} onSend={room.sendMessage} onReact={room.react} trackReactions={room.trackReactions} />
@@ -294,8 +304,29 @@ function AppAuthenticated({ session, onLogout }) {
         )}
       </AnimatePresence>
 
+      {/* ═══ VOLVER ARRIBA (solo aparece tras scroll) ═══ */}
+      <AnimatePresence>
+        {showTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 12, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 12, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed right-4 bottom-20 z-50 btn btn-sm btn-ghost btn-icon text-zinc-400 hover:text-white hover:bg-white/10"
+            title="Volver arriba"
+            aria-label="Volver arriba"
+          >
+            <ArrowUp size={18} />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {/* ═══ BARRA NOW PLAYING (footer fijo) ═══ */}
-      <NowPlaying
+            {/* ═══ BOTÓN VOLVER ARRIBA (aparece al hacer scroll) ═══ */}
+      <ScrollTopButton />
+
+<NowPlaying
         track={room.currentTrack}
         dj={room.dj}
         djAvatar={room.avatars[room.dj] || {}}
@@ -309,6 +340,46 @@ function AppAuthenticated({ session, onLogout }) {
         onReact={room.react}
       />
     </>
+  );
+}
+
+
+// Botón "volver arriba" — solo visible al hacer scroll (patrón estándar, no interfiere)
+function ScrollTopButton() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    let raf = false;
+    const onScroll = () => {
+      if (!raf) {
+        raf = true;
+        requestAnimationFrame(() => {
+          setVisible(window.scrollY > 600);
+          raf = false;
+        });
+      }
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <motion.button
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      className="fixed right-6 bottom-24 z-40 btn btn-sm btn-ghost btn-icon text-zinc-400 hover:text-white hover:bg-white/10 shadow-xl shadow-black/30 rounded-full"
+      aria-label="Volver arriba"
+      title="Volver arriba"
+    >
+      <ArrowUp size={18} />
+    </motion.button>
   );
 }
 

@@ -43,8 +43,9 @@ export function createStats() {
 }
 
 export function levelFromXp(xp) {
+  const safeXp = typeof xp === "number" && Number.isFinite(xp) ? Math.max(0, xp) : 0;
   let current = LEVEL_TITLES[0];
-  for (const lvl of LEVEL_TITLES) if (xp >= lvl.minXp) current = lvl;
+  for (const lvl of LEVEL_TITLES) if (safeXp >= lvl.minXp) current = lvl;
   const idx = LEVEL_TITLES.indexOf(current);
   const next = idx < LEVEL_TITLES.length - 1 ? LEVEL_TITLES[idx + 1] : null;
   return { ...current, next };
@@ -52,18 +53,31 @@ export function levelFromXp(xp) {
 
 export function levelProgress(xp) {
   const lvl = levelFromXp(xp);
+  const safeXp = typeof xp === "number" && Number.isFinite(xp) ? Math.max(0, xp) : 0;
   const currentMin = lvl.minXp;
   const nextMin = lvl.next ? lvl.next.minXp : currentMin + 1000;
-  const pct = nextMin > currentMin ? Math.min(100, Math.round(((xp - currentMin) / (nextMin - currentMin)) * 100)) : 100;
-  return { ...lvl, xp, currentMin, nextMin, pct };
+  const pct = nextMin > currentMin ? Math.min(100, Math.round(((safeXp - currentMin) / (nextMin - currentMin)) * 100)) : 100;
+  return { ...lvl, xp: safeXp, currentMin, nextMin, pct };
 }
 
 function newBadges(stats) {
-  return BADGES.filter((b) => !stats.badges.includes(b.id) && b.check(stats));
+  const owned = new Set(Array.isArray(stats?.badges) ? stats.badges : []);
+  return BADGES.filter((b) => {
+    if (owned.has(b.id)) return false;
+    try {
+      return b.check(stats);
+    } catch {
+      return false;
+    }
+  });
 }
 
 export function recordEvent(stats, eventType) {
-  const next = { ...stats, badges: [...stats.badges] };
+  if (!stats || typeof stats !== "object" || !Object.prototype.hasOwnProperty.call(XP_EVENTS, eventType)) {
+    return stats;
+  }
+  const base = { ...createStats(), ...stats };
+  const next = { ...base, badges: Array.isArray(base.badges) ? [...base.badges] : [] };
   switch (eventType) {
     case "bingo":      next.bingos += 1; break;
     case "line":       next.lines += 1; break;
@@ -78,10 +92,16 @@ export function recordEvent(stats, eventType) {
 }
 
 export function addXp(statsMap, user, eventType) {
-  const key = String(user || "Anónimo");
-  const current = statsMap?.[key] ? { ...statsMap[key] } : createStats();
+  const key = sanitizeUserKey(user);
+  const current = statsMap?.[key] ? { ...createStats(), ...statsMap[key] } : createStats();
+  current.badges = Array.isArray(current.badges) ? [...current.badges] : [];
   const updated = recordEvent(current, eventType);
   const next = { ...(statsMap || {}) };
   next[key] = updated;
   return next;
+}
+
+function sanitizeUserKey(user) {
+  const key = String(user ?? "Anónimo").trim().slice(0, 40);
+  return key || "Anónimo";
 }

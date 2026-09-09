@@ -1,4 +1,4 @@
-﻿import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Disc3, MessageSquare, Zap, Star, Users, Crown, X, BookOpen } from "lucide-react";
 import { RULE_COLORS, colorWithAlpha, COLORS } from "../lib/colors.js";
 

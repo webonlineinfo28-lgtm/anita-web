@@ -18,6 +18,7 @@
 
 import { STORAGE_KEYS } from "./constants.js";
 
+const CHAT_MAX_FALLBACK = 60;
 const SUPABASE_POLL_MS = 3000;
 const SUPABASE_DEBOUNCE_MS = 400;
 
@@ -33,10 +34,11 @@ function safeJSONParse(raw, fallback) {
 
 // Deduplica una lista de ítems que tengan `.id`.
 export function dedupById(items) {
+  if (!Array.isArray(items)) return [];
   const seen = new Set();
   const out = [];
-  for (const item of items || []) {
-    if (!item) continue;
+  for (const item of items) {
+    if (!item || typeof item !== 'object') continue;
     const key = item.id ?? JSON.stringify(item);
     if (seen.has(key)) continue;
     seen.add(key);
@@ -77,20 +79,18 @@ export function dedupNumbers(nums) {
 // fuerte (mensajes/canciones) se deduplican; los mapas por usuario se fusionan
 // campo a campo.
 export function mergeDomainStates(local, remote) {
-  const base = { ...(local || {}), ...(remote || {}) };
-
-  // Mensajes: dedup por id.
-  if (Array.isArray(base.messages)) base.messages = dedupById(base.messages);
-  // Playlist e historial: dedup por id.
+  const l = local && typeof local === 'object' ? local : {};
+  const r = remote && typeof remote === 'object' ? remote : {};
+  const base = { ...l, ...r };
+  if (Array.isArray(base.messages)) base.messages = dedupById(base.messages).slice(-CHAT_MAX_FALLBACK);
+  else if (base.messages !== undefined) base.messages = [];
   if (Array.isArray(base.playlist)) base.playlist = dedupById(base.playlist);
   if (Array.isArray(base.history)) base.history = dedupById(base.history);
-  // Waitlist: dedup por usuario.
   if (Array.isArray(base.waitlist)) base.waitlist = dedupByUser(base.waitlist);
-  // Bingo: números sin repetir, en orden.
-  if (Array.isArray(base.drawnNumbers)) base.drawnNumbers = dedupNumbers(base.drawnNumbers);
-  // Ganadores: dedup por id.
-  if (Array.isArray(base.winners)) base.winners = dedupById(base.winners);
-
+  if (Array.isArray(base.drawnNumbers)) base.drawnNumbers = dedupNumbers(base.drawnNumbers).slice(0, 75);
+  if (Array.isArray(base.winners)) base.winners = dedupById(base.winners).slice(-10);
+  if (base.avatars && typeof base.avatars === 'object') base.avatars = mergeUserMaps(l.avatars, r.avatars);
+  if (base.statsMap && typeof base.statsMap === 'object') base.statsMap = mergeUserMaps(l.statsMap, r.statsMap);
   return base;
 }
 

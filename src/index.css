@@ -20,6 +20,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
+  scroll-padding-bottom: 120px;
 }
 
 body {
@@ -28,6 +29,8 @@ body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.6;
   overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
   min-height: 100vh;
 }
 
