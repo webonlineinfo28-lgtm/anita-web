@@ -161,6 +161,29 @@ function makeLocalTransport() {
 
 // ---- Transporte remoto vía Supabase REST (sin SDK) -------------------------
 // Se activa solo si hay claves. Cada dominio usa su propia fila `rowId`.
+//
+// Robustez para funcionamiento 24/7 en todos los usuarios:
+// - fetch con TIMEOUT (AbortController): un request colgado no bloquea el
+//   ciclo de polling ni el flag anti-solapamiento.
+// - PUSH CON REINTENTOS + backoff exponencial: si el push falla (red caída,
+//   5xx), el estado pendiente se conserva y se reintenta automáticamente.
+// - RE-SINCRONIZACIÓN inmediata al volver a la pestaña (visibilitychange),
+//   al enfocar la ventana o al recuperar la conexión (online).
+// - Mientras la pestaña está oculta se omite el poll (ahorro de recursos);
+//   al volver, resync() trae el estado remoto al instante.
+const FETCH_TIMEOUT_MS = 8000;
+const PUSH_RETRY_BASE_MS = 2000;
+const PUSH_RETRY_MAX_MS = 30000;
+const PUSH_MAX_RETRIES = 8;
+
+function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => {
+    clearTimeout(timeoutId);
+  });
+}
+
 function makeSupabaseTransport(url, anonKey, rowId) {
   const endpoint = `${url.replace(/\/$/, "")}/rest/v1/festival_state`;
   const headers = {
@@ -173,9 +196,15 @@ function makeSupabaseTransport(url, anonKey, rowId) {
   let timer = null;
   let polling = false;
   let debounceTimer = null;
+  let disposed = false;
+
+  // Estado pendiente de publicar + reintentos con backoff exponencial.
+  let pendingState = null;
+  let pendingAttempts = 0;
+  let retryTimer = null;
 
   const fetchOnce = async () => {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${endpoint}?id=eq.${rowId}&select=state`,
       { headers },
     );
@@ -185,7 +214,7 @@ function makeSupabaseTransport(url, anonKey, rowId) {
   };
 
   const pushOnce = async (state) => {
-    const res = await fetch(`${endpoint}?id=eq.${rowId}`, {
+    const res = await fetchWithTimeout(`${endpoint}?id=eq.${rowId}`, {
       method: "POST",
       headers: { ...headers, Prefer: "resolution=merge-duplicates,return=minimal" },
       body: JSON.stringify({
@@ -197,37 +226,81 @@ function makeSupabaseTransport(url, anonKey, rowId) {
     if (!res.ok) throw new Error(`Supabase POST ${res.status}`);
   };
 
-  const startPolling = () => {
-    timer = setInterval(async () => {
-      if (polling) return;
-      polling = true;
-      try {
-        const remote = await fetchOnce();
-        if (remote) {
-          const json = JSON.stringify(remote);
-          if (json !== JSON.stringify(last)) {
-            last = remote;
-            listeners.forEach((fn) => fn(remote));
-          }
+  const attemptPush = async (state) => {
+    if (disposed || state === null || state === undefined) return;
+    try {
+      await pushOnce(state);
+      pendingState = null;
+      pendingAttempts = 0;
+    } catch (e) {
+      pendingAttempts += 1;
+      if (pendingAttempts <= PUSH_MAX_RETRIES) {
+        const delay = Math.min(
+          PUSH_RETRY_BASE_MS * 2 ** (pendingAttempts - 1),
+          PUSH_RETRY_MAX_MS,
+        );
+        console.warn(
+          `Supabase push falló (intento ${pendingAttempts}/${PUSH_MAX_RETRIES}, reintento en ${delay}ms):`,
+          e.message,
+        );
+        if (!retryTimer && !disposed) {
+          retryTimer = setTimeout(() => {
+            retryTimer = null;
+            if (pendingState !== null && pendingState !== undefined) {
+              void attemptPush(pendingState);
+            }
+          }, delay);
         }
-      } catch (e) {
-        console.warn("Supabase poll falló (se reintentará):", e.message);
-      } finally {
-        polling = false;
+      } else {
+        // Agotó reintentos: se conserva pendingState; el próximo push del
+        // usuario (o un resync) lo incluye con datos más recientes.
+        console.warn("Supabase push agotó reintentos; se reintentará con el próximo cambio:", e.message);
+        pendingAttempts = 0;
       }
-    }, SUPABASE_POLL_MS);
+    }
   };
 
-  let disposed = false;
-  fetchOnce()
-    .then((remote) => {
-      if (disposed || !remote) return;
-      last = remote;
-      listeners.forEach((fn) => fn(remote));
-    })
-    .catch(() => {
-      /* sin conexión inicial: se reintenta por polling */
-    });
+  const poll = async () => {
+    if (polling || disposed) return;
+    // Pestaña oculta: no gastar red; resync() traerá el estado al volver.
+    if (typeof document !== "undefined" && document.hidden) return;
+    polling = true;
+    try {
+      const remote = await fetchOnce();
+      if (remote) {
+        const json = JSON.stringify(remote);
+        if (json !== JSON.stringify(last)) {
+          last = remote;
+          listeners.forEach((fn) => fn(remote));
+        }
+      }
+    } catch (e) {
+      console.warn("Supabase poll falló (se reintentará):", e.message);
+    } finally {
+      polling = false;
+    }
+  };
+
+  const startPolling = () => {
+    timer = setInterval(() => void poll(), SUPABASE_POLL_MS);
+  };
+
+  // Re-sincronización inmediata: vuelve la pestaña, se enfoca la ventana o
+  // vuelve la conexión. Trae el remoto Y publica cualquier push pendiente.
+  const resync = () => {
+    if (disposed) return;
+    void poll();
+    if (pendingState !== null && pendingState !== undefined) {
+      void attemptPush(pendingState);
+    }
+  };
+  document.addEventListener("visibilitychange", resync);
+  window.addEventListener("focus", resync);
+  window.addEventListener("online", resync);
+
+  // Sincronización inicial: trae el estado remoto nada más cargar (el
+  // polling reintenta si la red aún no está disponible).
+  void poll().catch(() => {});
 
   startPolling();
 
@@ -238,9 +311,8 @@ function makeSupabaseTransport(url, anonKey, rowId) {
       last = state;
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
-        pushOnce(state).catch((e) =>
-          console.warn("Supabase push falló (se reintentará):", e.message),
-        );
+        pendingState = state;
+        void attemptPush(state);
       }, SUPABASE_DEBOUNCE_MS);
     },
     onState(cb) {
@@ -251,6 +323,10 @@ function makeSupabaseTransport(url, anonKey, rowId) {
       disposed = true;
       if (timer) clearInterval(timer);
       if (debounceTimer) clearTimeout(debounceTimer);
+      if (retryTimer) clearTimeout(retryTimer);
+      document.removeEventListener("visibilitychange", resync);
+      window.removeEventListener("focus", resync);
+      window.removeEventListener("online", resync);
     },
   };
 }
