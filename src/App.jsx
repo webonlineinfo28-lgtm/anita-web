@@ -108,16 +108,6 @@ function AppAuthenticated({ session, onLogout }) {
   const [showAvatarEditor, setShowAvatarEditor] = useState(false);
   const [roomMode, setRoomMode] = useState("normal"); // "normal" | "projector"
 
-  // Botón "volver arriba": solo visible tras hacer scroll (patrón estándar,
-  // no interfiere con la lectura como hacía el toggle de bloqueo).
-  const [showTop, setShowTop] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShowTop(window.scrollY > 600);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   // ─── Sistema de notificaciones Toast ───
   const [toasts, setToasts] = useState([]);
   const pushToast = useCallback((type, message) => {
@@ -304,29 +294,10 @@ function AppAuthenticated({ session, onLogout }) {
         )}
       </AnimatePresence>
 
-      {/* ═══ VOLVER ARRIBA (solo aparece tras scroll) ═══ */}
-      <AnimatePresence>
-        {showTop && (
-          <motion.button
-            initial={{ opacity: 0, y: 12, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed right-4 bottom-20 z-50 btn btn-sm btn-ghost btn-icon text-zinc-400 hover:text-white hover:bg-white/10"
-            title="Volver arriba"
-            aria-label="Volver arriba"
-          >
-            <ArrowUp size={18} />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
       {/* ═══ BARRA NOW PLAYING (footer fijo) ═══ */}
-            {/* ═══ BOTÓN VOLVER ARRIBA (aparece al hacer scroll) ═══ */}
+      {/* ═══ BOTÓN VOLVER ARRIBA (aparece al hacer scroll) ═══ */}
       <ScrollTopButton />
-
-<NowPlaying
+      <NowPlaying
         track={room.currentTrack}
         dj={room.dj}
         djAvatar={room.avatars[room.dj] || {}}
