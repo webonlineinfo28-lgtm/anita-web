@@ -5,7 +5,7 @@
 > - [`.clinerules/project.md`](./.clinerules/project.md) — Arquitectura y convenciones
 > - [`.clinerules/auditoria.md`](./.clinerules/auditoria.md) — Reglas de auditoría
 
-> 2026-09-08 | master | HEAD: [infraestructura-completa]
+> 2026-09-09 | master | HEAD: 8540b26 (origin/master sincronizado)
 
 ---
 
@@ -13,7 +13,49 @@
 
 **Stack**: React 18 + Vite 5 + Tailwind 3 + Framer Motion + react-player + canvas-confetti
 
-**Sincronización**: localStorage + Supabase opcional (0€)
+**Sincronización**: localStorage + Supabase ACTIVO (proyecto `AnitaMusic`, tabla `festival_state` con RLS anyone-read/write, 4 filas: main/room/avatars/stats). Transporte híbrido: polling REST 3s + merge + debounce.
+
+---
+
+## Sesión 2026-09-09 — Scroll + Robustez + Sync Online (COMPLETADA)
+
+### Commits
+- `41eaa8e` fix(ui): restaurar scroll natural y pulido de robustez
+- `8540b26` feat(sync): transporte online robusto - timeout, retry con backoff y resync
+- Ambos en `origin/master`. Working tree limpio. Tests 28/28 ✅. Build ✅ (~10.6s).
+
+### 1. Scroll natural (bug principal resuelto)
+- CAUSA RAÍZ: `h-screen w-full` + `scrollLocked ? overflow-hidden : overflow-auto` con `useState(true)` → app arrancaba bloqueada; `main` con `overflow-hidden` fijo (doble candado); grid con `maxHeight: calc(100vh-500px) + overflow-y-auto` (scroll anidado).
+- SOLUCIÓN: eliminado TODO el sistema de lock (`scrollLocked`, `showScrollBanner`, atajo `Shift+S`, botón flotante de emergencia) de `useRoom.js` y `App.jsx`.
+- Layout página: `min-h-screen ... overflow-x-clip pb-32` (el `pb-32` compensa la barra `NowPlaying` fija `bottom-0 z-40`).
+- Chat: altura fija `h-[560px] lg:h-[600px]` — solo la lista de mensajes scrollea internamente (`ChatPanel` → `flex-1 overflow-y-auto cosmic-scrollbar`, correcto).
+- Scroll interno válido SOLO en: mensajes de chat, bolas de bingo (`max-h-[140px]`), carrusel PlayerPanel (`overflow-x-auto`).
+- Botón "Volver arriba" estándar (lucide `ArrowUp`, aparece con `scrollY > 600`, `scrollTo smooth`).
+- `index.css`: `scroll-padding-bottom: 120px`, `body { overflow-y:auto }`, sin `overflow:hidden` global.
+
+### 2. Sync 100% online (sync.js)
+- Proyecto Supabase en uso: **`AnitaMusic`** (activo; `AnIta_festival` está PAUSADO y no se puede restaurar por límite free-tier de proyectos activos).
+- `.env` ya apunta a `AnitaMusic`. Tabla `festival_state` con RLS "Anyone can read/write" (necesario para sala pública sin auth).
+- Robustez añadida a `makeSupabaseTransport`:
+  1. `fetchWithTimeout` con AbortController → un fetch colgado ya NO bloquea el flag `polling` para siempre.
+  2. Push con retry + backoff exponencial → mensajes/canciones ya no se pierden si falla la red.
+  3. Re-sync inmediata en `visibilitychange` (volver a la pestaña) y evento `online` (recuperar red), incluyendo reenvío de pushes pendientes.
+
+### 3. Seguridad
+- `.env.example`: eliminadas credenciales reales de Supabase → placeholders. Solo `.env.example` está trackeado; `.env` real NO está en git (verificado con `git ls-files`).
+- `.gitignore` saneado: línea basura `pm test` eliminada, duplicados consolidados, patrón `.env` correcto.
+
+### 4. Robustez / pulido
+- `waitlist-core.js`, `chat-core.js`, `bingo-core.js`, `stats.js`, `constants.js`: defensas `asList()`/`cleanId()`, claves centralizadas en `STORAGE_KEYS`, timeouts de DjWheel en refs.
+- `sync.js`, `useRoom.js`: persistencia con try/catch y fallbacks.
+- Codificación: BOMs eliminados, UTF-8 limpio en todo `src/`. Sin scripts temporales en la raíz.
+- `waitlist-core.js` quedó refactorizado (funciones en una línea con defensas) — funcionalmente equivalente, 5 exportaciones intactas.
+
+### ⚠️ Lecciones de esta sesión (NO repetir)
+- NUNCA editar archivos grandes vía scripts Python/Node con regex sobre el contenido completo — `useBingo.js` quedó truncado a 28 líneas y una redirección de PowerShell lo convirtió a UTF-16 (git lo vio como binario). Restaurar con `git restore` y usar el editor con ediciones pequeñas.
+- PowerShell se come los `$` en heredocs/`node -e` anidados — preferir `node -e` con comillas simples cuidadas o el editor tool.
+- Verificar con `git ls-files` antes de borrar archivos "temporales" (`.eslintrc.cjs` y `test-page.cjs` eran del proyecto y hubo que restaurarlos).
+- No confundir scrollback antiguo del terminal con output actual — leer el archivo directamente para confirmar.
 
 ---
 
@@ -101,8 +143,9 @@ Los colores de insignias ahora usan COLORS centralizado (stats.js)
 ✅ FIX 2026-09-08: Colores hardcodeados centralizados en colors.js
 ✅ FIX 2026-09-08: Animación inline en CosmicBackground → clase CSS
 ✅ FIX 2026-09-08: App.jsx usa STORAGE_KEYS en lugar de literales
-✅ FIX 2026-09-08: App.jsx con h-screen w-full overflow-hidden
-✅ FIX 2026-09-08: Grid central con min-h-0 flex-1 overflow-hidden
+✅ FIX 2026-09-09: scroll natural restaurado — eliminado sistema de lock (scrollLocked/Shift+S/banner) de useRoom.js y App.jsx
+✅ FIX 2026-09-09: contenedores de página con min-h-screen + pb-32 (compensa NowPlaying fija); SIN h-screen/overflow-hidden en página
+✅ FIX 2026-09-09: chat con altura fija h-[560px] lg:h-[600px] — solo la lista de mensajes scrollea internamente
 ✅ FIX 2026-09-08: BingoPanel con overflow-hidden para scroll aislado
 ✅ FIX 2026-09-08: Badge "promotor" color centralizado (COLORS.amber)
 ✅ FIX 2026-09-08: vercel.json con SPA rewrite configurado
